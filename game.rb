@@ -1,11 +1,11 @@
 require './card'
 
 class Game
-	attr_accessor :players, :deck
+	attr_accessor :players, :deck, :crib
 
 	def initialize args
 		names = args[:names]
-		@players = names.map { |name| Player.new name }
+		@players = names.map { |name| Player.new name, self }
 		@dealer = @players.first
 		@deck = CardDeck::Deck.new
 		@crib = []
@@ -18,8 +18,7 @@ class Game
 		end
 	end
 
-	def add_card_to_crib player, card
+	def add_card_to_crib card
 		@crib << card
-		player.hand = player.hand - [card]
 	end
 end
