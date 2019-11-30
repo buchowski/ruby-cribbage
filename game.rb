@@ -1,7 +1,7 @@
 require './card'
 
 class Game
-	attr_accessor :players, :deck, :crib
+	attr_accessor :players, :deck, :crib, :pile
 
 	def initialize args
 		names = args[:names]
@@ -9,6 +9,7 @@ class Game
 		@dealer = @players.first
 		@deck = CardDeck::Deck.new
 		@crib = []
+		@pile = []
 	end
 
 	def deal
@@ -20,5 +21,9 @@ class Game
 
 	def add_card_to_crib card
 		@crib << card
+	end
+
+	def add_card_to_pile card
+		@pile << card
 	end
 end

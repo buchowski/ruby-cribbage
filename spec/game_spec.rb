@@ -51,3 +51,21 @@ RSpec.describe Game, "#add_card_to_crib" do
 		end
 	end
 end
+
+RSpec.describe Game, "#add_card_to_pile" do
+	context "with two players discarding 3 cards" do
+		it "should move cards from hands to pile" do
+			game = Game.new names: ["brandon", "murphy"]
+			game.deal
+			playerOne = game.players.first
+			playerTwo = game.players[1]
+
+			playerOne.add_card_to_pile playerOne.hand.sample
+			playerTwo.add_card_to_pile playerTwo.hand.sample
+
+			expect(playerOne.hand.size).to eql 5
+			expect(playerTwo.hand.size).to eql 5
+			expect(game.pile.size).to eql 2
+		end
+	end
+end

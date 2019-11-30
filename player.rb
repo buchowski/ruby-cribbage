@@ -11,4 +11,9 @@ class Player
 		@game.add_card_to_crib card
 		@hand = @hand - [card]
 	end
+
+	def add_card_to_pile card
+		@game.add_card_to_pile card
+		@hand = @hand - [card]
+	end
 end
