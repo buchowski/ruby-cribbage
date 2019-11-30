@@ -4,12 +4,11 @@ class Game
 	attr_accessor :players, :deck
 
 	def initialize args
-		@players = args[:players]
+		names = args[:names]
+		@players = names.map { |name| Player.new name }
 		@dealer = @players.first
 		@deck = CardDeck::Deck.new
 		@crib = []
-
-		deal
 	end
 
 	def deal
