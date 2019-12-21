@@ -69,3 +69,35 @@ RSpec.describe Game, "#add_card_to_pile" do
 		end
 	end
 end
+
+RSpec.describe Game, "#add_card_to_pile" do
+	context "with two players discarding 3 cards" do
+		it "should move cards from hands to pile" do
+			game = Game.new names: ["brandon", "murphy"]
+			card = game.deck.cards.select { |card| card.value == 10 }.first
+			ace = game.deck.cards.select { |card| card.value == 1 }.first
+
+			pile_score = game.add_card_to_pile card
+			expect(pile_score).to eql 10
+			expect(game.pile.size).to eql 1
+
+			pile_score = game.add_card_to_pile card
+			expect(pile_score).to eql 20
+			expect(game.pile.size).to eql 2
+
+			pile_score = game.add_card_to_pile card
+			expect(pile_score).to eql 30
+			expect(game.pile.size).to eql 3
+
+			expect{ game.add_card_to_pile card }.to raise_error PileError
+			expect(pile_score).to eql 30
+			expect(game.pile.size).to eql 3
+
+			pile_score = game.add_card_to_pile ace
+			expect(pile_score).to eql 31
+			expect(game.pile.size).to eql 4
+		end
+	end
+end
+
+

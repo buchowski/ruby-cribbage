@@ -1,7 +1,8 @@
 require './card'
 
+class PileError < StandardError; end
 class Game
-	attr_accessor :players, :deck, :crib, :pile
+	attr_accessor :players, :deck, :crib, :pile, :pile_score
 
 	def initialize args
 		names = args[:names]
@@ -10,6 +11,7 @@ class Game
 		@deck = CardDeck::Deck.new
 		@crib = []
 		@pile = []
+		@pile_score = 0
 	end
 
 	def deal
@@ -24,6 +26,14 @@ class Game
 	end
 
 	def add_card_to_pile card
+		update_pile_score card
 		@pile << card
+		@pile_score
+	end
+
+	def update_pile_score card
+		updated_score = @pile_score + card.value
+		raise PileError if updated_score > 31
+		@pile_score = updated_score
 	end
 end
