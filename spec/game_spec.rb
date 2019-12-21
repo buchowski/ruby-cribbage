@@ -71,31 +71,45 @@ RSpec.describe Game, "#add_card_to_pile" do
 end
 
 RSpec.describe Game, "#add_card_to_pile" do
-	context "with two players discarding 3 cards" do
-		it "should move cards from hands to pile" do
+	context "when cards are added to pile" do
+		it "should increment pile_score if card can be added" do
 			game = Game.new names: ["brandon", "murphy"]
-			card = game.deck.cards.select { |card| card.value == 10 }.first
-			ace = game.deck.cards.select { |card| card.value == 1 }.first
+			ace, five, ten = nil, nil, nil
 
-			pile_score = game.add_card_to_pile card
-			expect(pile_score).to eql 10
+			game.deck.cards.each do |card|
+				ace = card if card.value == 1
+				five = card if card.value == 5
+				ten = card if card.value == 10
+			end
+
+			points_for_player = game.add_card_to_pile ten
+			expect(game.pile_score).to eql 10
+			expect(points_for_player).to eql 0
 			expect(game.pile.size).to eql 1
 
-			pile_score = game.add_card_to_pile card
-			expect(pile_score).to eql 20
+			points_for_player = game.add_card_to_pile five
+			expect(game.pile_score).to eql 15
+			expect(points_for_player).to eql 2
 			expect(game.pile.size).to eql 2
 
-			pile_score = game.add_card_to_pile card
-			expect(pile_score).to eql 30
+			points_for_player = game.add_card_to_pile five
+			expect(game.pile_score).to eql 20
+			expect(points_for_player).to eql 0
 			expect(game.pile.size).to eql 3
 
-			expect{ game.add_card_to_pile card }.to raise_error PileError
-			expect(pile_score).to eql 30
-			expect(game.pile.size).to eql 3
-
-			pile_score = game.add_card_to_pile ace
-			expect(pile_score).to eql 31
+			points_for_player = game.add_card_to_pile ten
+			expect(game.pile_score).to eql 30
+			expect(points_for_player).to eql 0
 			expect(game.pile.size).to eql 4
+
+			expect{ game.add_card_to_pile ten }.to raise_error PileError
+			expect(game.pile_score).to eql 30
+			expect(game.pile.size).to eql 4
+
+			points_for_player = game.add_card_to_pile ace
+			expect(game.pile_score).to eql 31
+			expect(points_for_player).to eql 2
+			expect(game.pile.size).to eql 5
 		end
 	end
 end

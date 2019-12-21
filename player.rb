@@ -5,6 +5,7 @@ class Player
 		@name = name
 		@game = game
 		@hand = []
+		@score = 0
 	end
 
 	def add_card_to_crib card 
@@ -13,7 +14,7 @@ class Player
 	end
 
 	def add_card_to_pile card
-		@game.add_card_to_pile card
+		@score = @game.add_card_to_pile card
 		@hand = @hand - [card]
 	end
 end
