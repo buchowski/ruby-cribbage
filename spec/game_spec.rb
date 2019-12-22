@@ -23,12 +23,18 @@ end
 
 RSpec.describe Game, "#deal" do
 	context "with two players" do
-		it "deals 6 cards to each player" do
+		it "deals 6 cards to each player & cuts card" do
 			game = Game.new names: ["brandon", "murphy"]
+
+			expect(game.deck.cards.size).to eql 52
+			expect(game.cut_card).to eql nil
+
 			game.deal
 
 			expect(game.players[0].hand.size).to eql 6
 			expect(game.players[1].hand.size).to eql 6
+			expect(game.cut_card).not_to eql nil
+			expect(game.deck.cards.size).to eql 39
 		end
 	end
 end

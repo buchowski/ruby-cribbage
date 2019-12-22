@@ -2,7 +2,7 @@ require './card'
 
 class PileError < StandardError; end
 class Game
-	attr_accessor :players, :deck, :crib, :pile, :pile_score
+	attr_accessor :players, :deck, :crib, :pile, :pile_score, :cut_card
 
 	def initialize args
 		names = args[:names]
@@ -19,6 +19,7 @@ class Game
 		@players.each do |player|
 			player.hand = @deck.cards.slice!(0, 6)
 		end
+		@cut_card = @deck.cards.slice!(0)
 	end
 
 	def add_card_to_crib card
