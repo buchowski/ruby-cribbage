@@ -16,17 +16,14 @@ RSpec.describe Player, "#add_card_to_pile" do
 		player.add_card_to_pile five
 		expect(player.score).to eql 0
 
-
 		player.add_card_to_pile ten
 		expect(player.score).to eql 2
-
 
 		player.add_card_to_pile ten
 		expect(player.score).to eql 2
 
 		player.add_card_to_pile five
 		expect(player.score).to eql 2
-
 
 		player.add_card_to_pile ace
 		expect(player.score).to eql 4
