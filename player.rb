@@ -1,5 +1,5 @@
 class Player
-	attr_accessor :name, :hand
+	attr_accessor :name, :hand, :score
 
 	def initialize name, game
 		@name = name
@@ -14,7 +14,7 @@ class Player
 	end
 
 	def add_card_to_pile card
-		@score = @game.add_card_to_pile card
+		@score += @game.add_card_to_pile card
 		@hand = @hand - [card]
 	end
 end
