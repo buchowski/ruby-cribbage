@@ -17,4 +17,8 @@ class Player
 		@score += @game.add_card_to_pile card
 		@hand = @hand - [card]
 	end
+
+	def score_hand
+		@game.score_cards @hand
+	end
 end

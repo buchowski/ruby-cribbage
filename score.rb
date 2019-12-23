@@ -1,3 +1,4 @@
+require "sum_all_number_combinations"
 
 class Score
 	def get_points_for_player points
@@ -23,9 +24,21 @@ class Score
 		end
 	end
 
+	def score_sums cards
+		# 15 & 31
+		card_values = cards.map { |card| card.value }
+		sum_of_all = SumAllCombinations.new card_values
+		sum_of_all.sum
+		fifteen_count = sum_of_all.calculated_values.count 15.0
+		thirty_one_count = sum_of_all.calculated_values.count 31.0
+		fifteen_count * 2 + thirty_one_count * 2
+	end
+
 	def score_hand cards
 		# 15, 31, 2k, 3k, 4k, flush, straight (small?)
-		# include crib
-		score_n_of_a_kind cards
+		n_of_kind_score = score_n_of_a_kind cards
+		sum_score = score_sums cards
+		total_score = n_of_kind_score + sum_score
+		total_score
 	end
 end

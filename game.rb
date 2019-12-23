@@ -28,6 +28,14 @@ class Game
 		@crib << card
 	end
 
+	def score_cards cards
+		@score_client.score_hand(cards + [@cut_card])
+	end
+
+	def score_crib
+		score_cards @crib
+	end
+
 	def add_card_to_pile card
 		update_pile_score card
 		@pile << card
