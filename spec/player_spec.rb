@@ -1,31 +1,33 @@
 require './game'
-require './player'
+require './spec/test_utils'
 
-RSpec.describe Player, "#add_card_to_pile" do
-	it "should update players score" do
-		game = Game.new names: ["brandon", "murphy"]
-		player = game.players.first
-		ace, five, ten = nil, nil, nil
+RSpec.describe Player, "" do
+	context "#add_card_to_pile" do			
+		it "should update players score" do
+			game = Game.new names: ["brandon", "murphy"]
+			player = game.players.first
+			ace, five, ten = get_cards ["Ace", 5, 10]
 
-		game.deck.cards.each do |card|
-			ace = card if card.value == 1
-			five = card if card.value == 5
-			ten = card if card.value == 10
+			player.add_card_to_pile five
+			expect(player.score).to eql 0
+
+			player.add_card_to_pile ten
+			expect(player.score).to eql 2
+
+			player.add_card_to_pile ten
+			expect(player.score).to eql 2
+
+			player.add_card_to_pile five
+			expect(player.score).to eql 2
+
+			player.add_card_to_pile ace
+			expect(player.score).to eql 4
 		end
+	end
 
-		player.add_card_to_pile five
-		expect(player.score).to eql 0
+	context "#score_hand" do
+		it "" do
 
-		player.add_card_to_pile ten
-		expect(player.score).to eql 2
-
-		player.add_card_to_pile ten
-		expect(player.score).to eql 2
-
-		player.add_card_to_pile five
-		expect(player.score).to eql 2
-
-		player.add_card_to_pile ace
-		expect(player.score).to eql 4
+		end
 	end
 end
