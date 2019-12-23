@@ -13,4 +13,8 @@ def get_cards card_request
 
 		return cards if card_request.size == cards.size
 	end
+
+	if !card_request.compact.empty?
+		raise "You requested non-existent card #{card_request.compact}"
+	end
 end
