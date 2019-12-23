@@ -19,7 +19,7 @@ class Score
 		end
 
 		counts.values.reduce(0) do |points, count|
-			points += (count > 1) ? count * 2 : 0
+			points += count * (count - 1)
 		end
 	end
 
