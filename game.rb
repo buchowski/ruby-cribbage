@@ -3,7 +3,7 @@ require './score'
 
 class PileError < StandardError; end
 class Game
-	attr_accessor :players, :deck, :crib, :pile, :pile_score, :cut_card
+	attr_accessor :players, :deck, :crib, :pile, :pile_score, :cut_card, :dealer
 
 	def initialize args
 		names = args[:names]
@@ -22,6 +22,8 @@ class Game
 			player.hand = @deck.cards.slice!(0, 6)
 		end
 		@cut_card = @deck.cards.slice!(0)
+		# two for his heels
+		@dealer.score = 2 if @cut_card.num == "Jack"
 	end
 
 	def add_card_to_crib card
@@ -48,3 +50,10 @@ class Game
 		@pile_score = updated_score
 	end
 end
+
+# dealer deals
+# opponent cuts
+# add to crib 
+# opponent starts (play round)
+# opponent show
+# dealer show (crib cannot have 4-card flush)

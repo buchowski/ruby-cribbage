@@ -36,6 +36,13 @@ RSpec.describe Game, "#deal" do
 			expect(game.cut_card).not_to eql nil
 			expect(game.deck.cards.size).to eql 39
 		end
+		it "gives 2 points to dealer if cut_card is Jack" do
+			game = Game.new names: ["brandon", "murphy"]
+			jack_card = get_cards(["Jack"]).first
+			game.deck.cards = Array.new(13, jack_card)
+			game.deal
+			expect(game.dealer.score).to eql 2
+		end
 	end
 end
 
@@ -74,19 +81,11 @@ RSpec.describe Game, "#add_card_to_pile" do
 			expect(game.pile.size).to eql 2
 		end
 	end
-end
 
-RSpec.describe Game, "#add_card_to_pile" do
 	context "when cards are added to pile" do
 		it "should increment pile_score if card can be added" do
 			game = Game.new names: ["brandon", "murphy"]
-			ace, five, ten = nil, nil, nil
-
-			game.deck.cards.each do |card|
-				ace = card if card.value == 1
-				five = card if card.value == 5
-				ten = card if card.value == 10
-			end
+			ace, five, ten = get_cards ["Ace", 5, 10]
 
 			points_for_player = game.add_card_to_pile ten
 			expect(game.pile_score).to eql 10
