@@ -6,6 +6,9 @@ RSpec.describe FSM, "fsm" do
 		@game = Game.new names: ["brandon", "murphy"]
 		@fsm = FSM.new @game
 	end
+	it "should return false if invalid transition" do
+		expect(@fsm.deal).to eql false
+	end
 	it "should default to waiting_to_start" do
 		expect(@fsm.waiting_to_start?).to eql true
 	end

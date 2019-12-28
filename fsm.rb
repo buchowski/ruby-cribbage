@@ -7,10 +7,10 @@ class FSM
 		@game = game
 	end
 
-	aasm do
+	aasm whiny_transitions: false do
 		state :waiting_to_start, initial: true
 		state :cutting_for_deal, :cutting_for_top_card
-		state :dealing, :playing
+		state :dealing, :playing, :scoring
 
 		event :start do
 			transitions from: :waiting_to_start, to: :cutting_for_deal
@@ -32,6 +32,9 @@ class FSM
 			after do
 				@game.cut_for_top_card
 			end
+		end
+
+		event :play_card do
 		end
 	end
 end
