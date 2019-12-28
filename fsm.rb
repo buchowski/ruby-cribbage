@@ -11,7 +11,7 @@ class FSM
 		state :waiting_to_start, initial: true
 		state :cutting_for_deal, :cutting_for_top_card
 		state :dealing, :scoring
-		state :player_one_playing
+		state :player_one_playing, :player_two_playing
 
 		event :start do
 			transitions from: :waiting_to_start, to: :cutting_for_deal
@@ -36,15 +36,28 @@ class FSM
 		end
 
 		event :play do
-			transitions from: :player_one_playing, to: :scoring do
-				guard do
-					@game.player_hands_empty? && @game.pile_has_cards?
-				end
-			end
+			transitions({
+				from: [:player_one_playing, :player_two_playing],
+				to: :scoring,
+				guard: :is_play_over?
+			})
+			
+			transitions({
+				from: :player_one_playing,
+				to: :player_two_playing,
+				guard: :can_player_one_play_card?
+			})
 			transitions from: :player_one_playing, to: :player_one_playing
-			after do |args|
-				puts "bobby", args
-			end
+			transitions from: :player_two_playing, to: :player_two_playing
 		end
+	end
+
+	def is_play_over?
+		@game.player_hands_empty? && @game.pile_has_cards?
+	end
+
+	def can_player_one_play_card? *args
+		player, card = args
+		@game.can_play_card?(card) 
 	end
 end
