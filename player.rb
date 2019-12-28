@@ -14,7 +14,9 @@ class Player
 	end
 
 	def add_card_to_pile card
-		@score += @game.add_card_to_pile card
+		is_success, points = @game.add_card_to_pile card
+		return if not is_success
+		@score += points
 		@hand = @hand - [card]
 	end
 

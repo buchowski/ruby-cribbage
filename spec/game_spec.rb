@@ -90,33 +90,40 @@ RSpec.describe Game, "#add_card_to_pile" do
 			game = Game.new names: ["brandon", "murphy"]
 			ace, five, ten = get_cards ["Ace", 5, 10]
 
-			points_for_player = game.add_card_to_pile ten
+			is_success, points = game.add_card_to_pile ten
 			expect(game.pile_score).to eql 10
-			expect(points_for_player).to eql 0
+			expect(points).to eql 0
+			expect(is_success).to eql true
 			expect(game.pile.size).to eql 1
 
-			points_for_player = game.add_card_to_pile five
+			is_success, points = game.add_card_to_pile five
 			expect(game.pile_score).to eql 15
-			expect(points_for_player).to eql 2
+			expect(points).to eql 2
+			expect(is_success).to eql true
 			expect(game.pile.size).to eql 2
 
-			points_for_player = game.add_card_to_pile five
+			is_success, points = game.add_card_to_pile five
 			expect(game.pile_score).to eql 20
-			expect(points_for_player).to eql 0
+			expect(points).to eql 0
+			expect(is_success).to eql true
 			expect(game.pile.size).to eql 3
 
-			points_for_player = game.add_card_to_pile ten
+			is_success, points = game.add_card_to_pile ten
 			expect(game.pile_score).to eql 30
-			expect(points_for_player).to eql 0
+			expect(points).to eql 0
+			expect(is_success).to eql true
 			expect(game.pile.size).to eql 4
 
-			expect{ game.add_card_to_pile ten }.to raise_error PileError
+			is_success, points = game.add_card_to_pile ten
 			expect(game.pile_score).to eql 30
+			expect(points).to eql 0
+			expect(is_success).to eql false
 			expect(game.pile.size).to eql 4
 
-			points_for_player = game.add_card_to_pile ace
+			is_success, points = game.add_card_to_pile ace
 			expect(game.pile_score).to eql 31
-			expect(points_for_player).to eql 2
+			expect(points).to eql 2
+			expect(is_success).to eql true
 			expect(game.pile.size).to eql 5
 		end
 	end

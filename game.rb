@@ -1,7 +1,6 @@
 require './card'
 require './score'
 
-class PileError < StandardError; end
 class Game
 	attr_accessor :players, :deck, :crib, :pile, :pile_score, :cut_card, :dealer
 
@@ -42,15 +41,15 @@ class Game
 	end
 
 	def add_card_to_pile card
-		update_pile_score card
+		return false, 0 if not can_play_card? card
+		@pile_score += card.value
 		@pile << card
-		@score_client.get_points_for_player @pile_score
+		points = @score_client.get_points_for_player @pile_score
+		return true, points
 	end
 
-	def update_pile_score card
-		updated_score = @pile_score + card.value
-		raise PileError if updated_score > 31
-		@pile_score = updated_score
+	def can_play_card? card
+		@pile_score + card.value <= 31
 	end
 
 	def player_hands_empty?
