@@ -42,4 +42,35 @@ RSpec.describe FSM, "fsm" do
 
 		expect(@game.cut_card.nil?).to eql false
 	end
+	context "play" do
+		before do
+			@fsm.start
+			@fsm.cut_for_deal
+			@fsm.deal
+		end
+
+		it "should stay in playing state if pile isn't full" do
+			expect(@fsm.play).to eql false
+
+			@fsm.cut_for_top_card
+
+			expect(@fsm.playing?).to eql true
+			expect(@fsm.play).to eql true
+			expect(@fsm.playing?).to eql true
+		end
+		it "should transition to scoring if pile is full" do
+			expect(@fsm.play).to eql false
+
+			@fsm.cut_for_top_card
+
+			expect(@fsm.playing?).to eql true
+
+			slice_hand = proc { |player| player.hand.slice!(0, player.hand.size) }	
+			@game.pile = @game.players.map(&slice_hand).flatten
+
+			expect(@fsm.play).to eql true
+			expect(@fsm.playing?).to eql false
+			expect(@fsm.scoring?).to eql true
+		end
+	end
 end
