@@ -11,7 +11,7 @@ class FSM
 		state :waiting_to_start, initial: true
 		state :cutting_for_deal, :cutting_for_top_card
 		state :dealing, :scoring
-		state :playing
+		state :player_one_playing
 
 		event :start do
 			transitions from: :waiting_to_start, to: :cutting_for_deal
@@ -29,22 +29,19 @@ class FSM
 		end
 
 		event :cut_for_top_card do
-			transitions from: :cutting_for_top_card, to: :playing
+			transitions from: :cutting_for_top_card, to: :player_one_playing
 			after do
 				@game.cut_for_top_card
 			end
 		end
 
 		event :play do
-			transitions from: :playing, to: :scoring do
+			transitions from: :player_one_playing, to: :scoring do
 				guard do
-					are_hands_empty = @game.players.map { |player| player.hand.empty?}.all?
-					does_pile_have_cards = !@game.pile.empty?
-
-					are_hands_empty && does_pile_have_cards
+					@game.player_hands_empty? && @game.pile_has_cards?
 				end
 			end
-			transitions from: :playing, to: :playing
+			transitions from: :player_one_playing, to: :player_one_playing
 			after do |args|
 				puts "bobby", args
 			end

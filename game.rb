@@ -54,4 +54,12 @@ class Game
 		raise PileError if updated_score > 31
 		@pile_score = updated_score
 	end
+
+	def player_hands_empty?
+		@players.map { |player| player.hand.empty? }.all?
+	end
+
+	def pile_has_cards?
+		!@pile.empty?
+	end
 end
