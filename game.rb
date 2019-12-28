@@ -23,6 +23,9 @@ class Game
 		@players.each do |player|
 			player.hand = @deck.cards.slice!(0, 6)
 		end
+	end
+
+	def cut_for_top_card
 		@cut_card = @deck.cards.slice!(0)
 		# two for his heels
 		@dealer.score = 2 if @cut_card.num == "Jack"

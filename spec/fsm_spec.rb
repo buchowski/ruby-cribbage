@@ -14,7 +14,7 @@ RSpec.describe FSM, "fsm" do
 
 		expect(@fsm.cutting_for_deal?).to eql true
 	end
-	it "deal should call game.deal" do
+	it "deal should call deal cards" do
 		@fsm.start
 		@fsm.cut_for_deal
 
@@ -27,5 +27,16 @@ RSpec.describe FSM, "fsm" do
 
 		expect(player1.hand.empty?).to eql false
 		expect(player2.hand.empty?).to eql false
+	end
+	it "cut_for_deal should get the cut card" do
+		@fsm.start
+		@fsm.cut_for_deal
+		@fsm.deal
+
+		expect(@game.cut_card.nil?).to eql true
+
+		@fsm.cut_for_top_card
+
+		expect(@game.cut_card.nil?).to eql false
 	end
 end

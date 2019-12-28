@@ -10,7 +10,7 @@ class FSM
 	aasm do
 		state :waiting_to_start, initial: true
 		state :cutting_for_deal, :cutting_for_top_card
-		state :dealing
+		state :dealing, :playing
 
 		event :start do
 			transitions from: :waiting_to_start, to: :cutting_for_deal
@@ -29,6 +29,9 @@ class FSM
 
 		event :cut_for_top_card do
 			transitions from: :cutting_for_top_card, to: :playing
+			after do
+				@game.cut_for_top_card
+			end
 		end
 	end
 end

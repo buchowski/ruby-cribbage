@@ -33,16 +33,19 @@ RSpec.describe Game, "#deal" do
 
 			expect(game.players[0].hand.size).to eql 6
 			expect(game.players[1].hand.size).to eql 6
-			expect(game.cut_card).not_to eql nil
-			expect(game.deck.cards.size).to eql 39
+			expect(game.cut_card).to eql nil
+			expect(game.deck.cards.size).to eql 40
 		end
-		it "gives 2 points to dealer if cut_card is Jack" do
-			game = Game.new names: ["brandon", "murphy"]
-			jack_card = get_cards(["Jack"]).first
-			game.deck.cards = Array.new(13, jack_card)
-			game.deal
-			expect(game.dealer.score).to eql 2
-		end
+	end
+end
+
+RSpec.describe Game, "#cut_for_top_card" do
+	it "gives 2 points to dealer if cut_card is Jack" do
+		game = Game.new names: ["brandon", "murphy"]
+		jack_card = get_cards(["Jack"]).first
+		game.deck.cards = Array.new(13, jack_card)
+		game.cut_for_top_card
+		expect(game.dealer.score).to eql 2
 	end
 end
 
