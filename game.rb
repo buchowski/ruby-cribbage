@@ -1,6 +1,5 @@
 require './card'
 require './score'
-require './fsm'
 
 class PileError < StandardError; end
 class Game
@@ -10,7 +9,6 @@ class Game
 		names = args[:names]
 		@players = names.map { |name| Player.new name, self }
 		@dealer = @players.first
-		@fsm = FSM.new self
 		@deck = CardDeck::Deck.new
 		@crib = []
 		@pile = []
