@@ -18,6 +18,18 @@ RSpec.describe Game, "#initialize" do
 			game = Game.new names: ["brandon", "murphy"]
 			expect(game.players.size).to eql 2
 		end
+		it "should have a dealer and opponent" do
+			game = Game.new names: ["brandon", "murphy"]
+			dealer, opponent = game.players
+
+			expect(game.dealer).to eql dealer
+			expect(game.opponent).to eql opponent
+
+			game.dealer = opponent
+
+			expect(game.dealer).to eql opponent
+			expect(game.opponent).to eql dealer
+		end
 	end
 end
 

@@ -15,6 +15,10 @@ class Game
 		@score_client = Score.new
 	end
 
+	def opponent
+		@players.difference([@dealer]).first
+	end
+
 	def deal
 		@deck.cards.shuffle!
 		@players.each do |player|
