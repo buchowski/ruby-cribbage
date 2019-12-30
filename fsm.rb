@@ -45,7 +45,7 @@ class FSM
 			transitions({
 				from: :dealer_playing,
 				to: :opponent_playing,
-				guard: :can_dealer_play_card?
+				guard: [:can_dealer_play_card?, :opponent_has_playable_card?]
 			})
 			transitions from: :dealer_playing, to: :dealer_playing
 			transitions from: :opponent_playing, to: :opponent_playing
@@ -56,8 +56,14 @@ class FSM
 		@game.player_hands_empty? && @game.pile_has_cards?
 	end
 
+	def opponent_has_playable_card? *args
+		player, card = args
+		score = @game.pile_score + card.value
+		@game.opponent.hand.map { |card| card.value + score <= 31 } .any?
+	end
+
 	def can_dealer_play_card? *args
 		player, card = args
-		@game.can_play_card?(card) 
+		@game.can_play_card? card 
 	end
 end
