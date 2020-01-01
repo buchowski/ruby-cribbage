@@ -47,8 +47,6 @@ class FSM
 				to: :opponent_playing,
 				guard: [:can_dealer_play_card?, :opponent_has_playable_card?]
 			})
-			transitions from: :dealer_playing, to: :dealer_playing
-			transitions from: :opponent_playing, to: :opponent_playing
 		end
 	end
 
