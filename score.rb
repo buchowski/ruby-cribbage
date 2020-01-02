@@ -1,11 +1,13 @@
 require "sum_all_number_combinations"
 
 class Score
-	def get_points_for_player points
-		if points == 15 || points == 31
-			return 2
-		end
-		return 0
+	def get_points pile, pile_score, is_last_card
+		return 2 if pile_score == 31
+		points = pile_score == 15 ? 2 : 0
+
+		points += 1 if is_last_card
+		
+		return points
 	end
 
 	def score_n_of_a_kind cards

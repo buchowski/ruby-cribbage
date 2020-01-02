@@ -35,13 +35,12 @@ class Game
 
 		player.hand = player.hand - [card]
 		@pile << card
-		# giving 2 for 31 twice? need to score entire pile not just pile_score
-		# pass can_either_player_play? to this to score last card
-		points = @score_client.get_points_for_player pile_score 
-		player.score += points
+		is_last_card = (not can_either_player_play?)
+		player.score += @score_client.get_points(@pile, pile_score, is_last_card)
 
-		reset_pile if not can_either_player_play?
-		begin_scoring_round if not can_either_player_play?
+		reset_pile if is_last_card
+		#TODO below is dangerous. relies on reset_pile to happen above. replace with something better
+		begin_scoring_round if is_last_card
 
 		@whose_turn = not_whose_turn if can_not_whose_turn_play?
 
@@ -49,6 +48,7 @@ class Game
 	end
 
 	def is_valid_play? player, card
+		#TODO use fsm to check we're in play state
 		raise "player must wait turn" if not player == @whose_turn
 		raise "player may only play card from own hand" if not player.hand.include?(card)
 		raise "cannot play card that pushes pile over 31" if not can_play_card? card
