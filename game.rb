@@ -2,7 +2,7 @@ require './card'
 require './score'
 
 class Game
-	attr_accessor :players, :deck, :crib, :pile, :pile_score, :cut_card, :dealer, :whose_turn
+	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn
 
 	def initialize args
 		names = args[:names]
@@ -11,7 +11,6 @@ class Game
 		@deck = CardDeck::Deck.new
 		@crib = []
 		@pile = []
-		@pile_score = 0
 		@score_client = Score.new
 		@whose_turn = dealer
 	end
@@ -34,12 +33,11 @@ class Game
 	def play_card player, card
 		is_valid_play?(player, card)
 
-		@pile_score += card.value
 		player.hand = player.hand - [card]
 		@pile << card
 		# giving 2 for 31 twice? need to score entire pile not just pile_score
 		# pass can_either_player_play? to this to score last card
-		points = @score_client.get_points_for_player @pile_score 
+		points = @score_client.get_points_for_player pile_score 
 		player.score += points
 
 		reset_pile if not can_either_player_play?
@@ -66,11 +64,11 @@ class Game
 	end
 
 	def can_whose_turn_play?
-		has_playable_card? @pile_score, @whose_turn.hand
+		has_playable_card? pile_score, @whose_turn.hand
 	end
 
 	def can_not_whose_turn_play?
-		has_playable_card? @pile_score, not_whose_turn.hand
+		has_playable_card? pile_score, not_whose_turn.hand
 	end
 
 	def can_either_player_play?
@@ -79,7 +77,10 @@ class Game
 
 	def reset_pile
 		@pile = []
-		@pile_score = 0
+	end
+
+	def pile_score
+		@pile.inject(0) { |total, card| total + card.value }
 	end
 
 	def cut_for_top_card
@@ -105,7 +106,7 @@ class Game
 	end
 
 	def can_play_card? card
-		@pile_score + card.value <= 31
+		pile_score + card.value <= 31
 	end
 
 	def player_hands_empty?
