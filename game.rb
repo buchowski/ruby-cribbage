@@ -39,8 +39,7 @@ class Game
 		player.score += @score_client.get_points(@pile, pile_score, is_last_card)
 
 		reset_pile if is_last_card
-		#TODO below is dangerous. relies on reset_pile to happen above. replace with something better
-		begin_scoring_round if is_last_card
+		begin_scoring_round if player_hands_empty?
 
 		@whose_turn = not_whose_turn if can_not_whose_turn_play?
 
@@ -101,19 +100,11 @@ class Game
 		score_cards @crib
 	end
 
-	def add_card_to_pile card
-		return points
-	end
-
 	def can_play_card? card
 		pile_score + card.value <= 31
 	end
 
 	def player_hands_empty?
 		@players.map { |player| player.hand.empty? }.all?
-	end
-
-	def pile_has_cards?
-		!@pile.empty?
 	end
 end
