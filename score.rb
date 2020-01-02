@@ -2,12 +2,25 @@ require "sum_all_number_combinations"
 
 class Score
 	def get_points pile, pile_score, is_last_card
-		return 2 if pile_score == 31
-		points = pile_score == 15 ? 2 : 0
+		points = 0
+		points = 1 if pile_score == 31
+		points = 2 if pile_score == 15
 
 		points += 1 if is_last_card
+		points += score_consecutive pile
 		
 		return points
+	end
+
+	def score_consecutive cards
+		count = 0
+
+		cards.each_index do |i|
+			break if i == cards.size - 1
+			count = (cards[i].num == cards[i + 1].num) ? count + 1 : 0
+		end
+		# returns 0, 2, 6 or 12
+		return count ** 2 + count
 	end
 
 	def score_n_of_a_kind cards

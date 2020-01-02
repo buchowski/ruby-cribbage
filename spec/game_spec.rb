@@ -118,7 +118,7 @@ RSpec.describe Game, "#play_card" do
 
 			is_success = game.play_card dealer, five
 			expect(game.pile_score).to eql 20
-			expect(dealer.score).to eql 0 #TODO this should be 2 for a pair of 5's
+			expect(dealer.score).to eql 2
 			expect(is_success).to eql true
 			expect(game.pile.size).to eql 3
 
@@ -130,12 +130,12 @@ RSpec.describe Game, "#play_card" do
 
 			expect { game.play_card dealer, ten_three }.to raise_error
 			expect(game.pile_score).to eql 30
-			expect(dealer.score).to eql 0
+			expect(dealer.score).to eql 2
 			expect(game.pile.size).to eql 4
 
 			is_success = game.play_card dealer, ace
-			expect(game.pile_score).to eql 0 #TODO pile_score and pile.size gets reset. is that the best way?
-			expect(dealer.score).to eql 2
+			expect(game.pile_score).to eql 0 
+			expect(dealer.score).to eql 4
 			expect(is_success).to eql true
 			expect(game.pile.size).to eql 0
 		end

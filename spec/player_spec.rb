@@ -21,13 +21,13 @@ RSpec.describe Player, "" do
 			expect(opponent.score).to eql 2
 
 			dealer.add_card_to_pile ten
-			expect(dealer.score).to eql 0
+			expect(dealer.score).to eql 2
 
 			opponent.add_card_to_pile five_two
 			expect(opponent.score).to eql 2
 
 			dealer.add_card_to_pile ace
-			expect(dealer.score).to eql 2
+			expect(dealer.score).to eql 4
 		end
 	end
 
