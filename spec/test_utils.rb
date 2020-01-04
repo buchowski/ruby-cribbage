@@ -18,3 +18,10 @@ def get_cards card_request
 		raise "You requested non-existent card #{card_request.compact}"
 	end
 end
+
+def get_mock_fsm
+	fsm = double("fsm")
+	allow(fsm).to receive(:playing?).and_return true
+	allow(fsm).to receive(:begin_scoring_round)
+	return fsm
+end

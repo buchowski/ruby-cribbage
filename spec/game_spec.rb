@@ -81,63 +81,65 @@ RSpec.describe Game, "#add_card_to_crib" do
 end
 
 RSpec.describe Game, "#play_card" do
+	before(:example) do
+		@game = Game.new names: ["brandon", "murphy"]
+		@game.fsm = get_mock_fsm
+	end
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to pile" do
-			game = Game.new names: ["brandon", "murphy"]
-			game.deal
-			playerOne, playerTwo = game.players
+			@game.deal
+			playerOne, playerTwo = @game.players
 
 			playerOne.add_card_to_pile playerOne.hand.sample
 			playerTwo.add_card_to_pile playerTwo.hand.sample
 
 			expect(playerOne.hand.size).to eql 5
 			expect(playerTwo.hand.size).to eql 5
-			expect(game.pile.size).to eql 2
+			expect(@game.pile.size).to eql 2
 		end
 	end
 
 	context "when cards are added to pile" do
 		it "should increment pile_score if card can be added" do
-			game = Game.new names: ["brandon", "murphy"]
 			ace, five, ten, five_two, ten_two, ten_three = get_cards ["Ace", 5, 10, 5, 10, 10]
-			dealer, opponent = game.whose_turn, game.not_whose_turn
+			dealer, opponent = @game.whose_turn, @game.not_whose_turn
 			dealer.hand = [five, ten, ace, ten_three]
 			opponent.hand = [ten_two, five_two]
 
-			is_success = game.play_card dealer, ten
-			expect(game.pile_score).to eql 10
+			is_success = @game.play_card dealer, ten
+			expect(@game.pile_score).to eql 10
 			expect(dealer.score).to eql 0
 			expect(is_success).to eql true
-			expect(game.pile.size).to eql 1
+			expect(@game.pile.size).to eql 1
 
-			is_success = game.play_card opponent, five_two
-			expect(game.pile_score).to eql 15
+			is_success = @game.play_card opponent, five_two
+			expect(@game.pile_score).to eql 15
 			expect(opponent.score).to eql 2
 			expect(is_success).to eql true
-			expect(game.pile.size).to eql 2
+			expect(@game.pile.size).to eql 2
 
-			is_success = game.play_card dealer, five
-			expect(game.pile_score).to eql 20
+			is_success = @game.play_card dealer, five
+			expect(@game.pile_score).to eql 20
 			expect(dealer.score).to eql 2
 			expect(is_success).to eql true
-			expect(game.pile.size).to eql 3
+			expect(@game.pile.size).to eql 3
 
-			is_success = game.play_card opponent, ten_two
-			expect(game.pile_score).to eql 30
+			is_success = @game.play_card opponent, ten_two
+			expect(@game.pile_score).to eql 30
 			expect(opponent.score).to eql 2
 			expect(is_success).to eql true
-			expect(game.pile.size).to eql 4
+			expect(@game.pile.size).to eql 4
 
-			expect { game.play_card dealer, ten_three }.to raise_error
-			expect(game.pile_score).to eql 30
+			expect { @game.play_card dealer, ten_three }.to raise_error
+			expect(@game.pile_score).to eql 30
 			expect(dealer.score).to eql 2
-			expect(game.pile.size).to eql 4
+			expect(@game.pile.size).to eql 4
 
-			is_success = game.play_card dealer, ace
-			expect(game.pile_score).to eql 0 
+			is_success = @game.play_card dealer, ace
+			expect(@game.pile_score).to eql 0 
 			expect(dealer.score).to eql 4
 			expect(is_success).to eql true
-			expect(game.pile.size).to eql 0
+			expect(@game.pile.size).to eql 0
 		end
 	end
 end

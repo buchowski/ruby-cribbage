@@ -4,10 +4,11 @@ require './spec/test_utils'
 RSpec.describe Player, "" do
 	before(:example) do
 		@game = Game.new names: ["brandon", "murphy"]
+		@game.fsm = get_mock_fsm
 		@player = @game.players.first
 	end
 
-	context "#add_card_to_pile" do			
+	context "#add_card_to_pile" do
 		it "should transition between players and update player scores" do
 			ace, five, ten, five_two, ten_two = get_cards ["Ace", 5, 10, 5, 10]
 			dealer, opponent = @game.whose_turn, @game.not_whose_turn

@@ -34,5 +34,9 @@ class FSM
 				@game.cut_for_top_card
 			end
 		end
+
+		event :begin_scoring_round do
+			transitions from: :playing, to: :scoring
+		end
 	end
 end

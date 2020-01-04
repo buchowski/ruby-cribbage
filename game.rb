@@ -2,7 +2,7 @@ require './card'
 require './score'
 
 class Game
-	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn
+	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm
 
 	def initialize args
 		names = args[:names]
@@ -13,6 +13,7 @@ class Game
 		@pile = []
 		@score_client = Score.new
 		@whose_turn = dealer
+		@fsm = FSM.new self
 	end
 
 	def opponent
@@ -39,7 +40,7 @@ class Game
 		player.score += @score_client.get_points(@pile, pile_score, is_last_card)
 
 		reset_pile if is_last_card
-		begin_scoring_round if player_hands_empty?
+		@fsm.begin_scoring_round if player_hands_empty?
 
 		@whose_turn = not_whose_turn if can_not_whose_turn_play?
 
@@ -47,15 +48,11 @@ class Game
 	end
 
 	def is_valid_play? player, card
-		#TODO use fsm to check we're in play state
+		raise "must be in playing state" if not @fsm.playing?
 		raise "player must wait turn" if not player == @whose_turn
 		raise "player may only play card from own hand" if not player.hand.include?(card)
 		raise "cannot play card that pushes pile over 31" if not can_play_card? card
 		return true
-	end
-
-	def begin_scoring_round
-		# if neither player can play after reset_pile, then time for scoring round
 	end
 
 	def has_playable_card? score, cards
