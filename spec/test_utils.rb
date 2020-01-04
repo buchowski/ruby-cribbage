@@ -22,6 +22,6 @@ end
 def get_mock_fsm
 	fsm = double("fsm")
 	allow(fsm).to receive(:playing?).and_return true
-	allow(fsm).to receive(:begin_scoring_round)
+	allow(fsm).to receive(:score)
 	return fsm
 end

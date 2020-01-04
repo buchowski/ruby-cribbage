@@ -18,6 +18,6 @@ class Player
 	end
 
 	def score_hand
-		@game.score_cards @hand
+		@game.score_cards self, @hand
 	end
 end

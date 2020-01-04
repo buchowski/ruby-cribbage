@@ -40,7 +40,7 @@ class Game
 		player.score += @score_client.get_points(@pile, pile_score, is_last_card)
 
 		reset_pile if is_last_card
-		@fsm.begin_scoring_round if player_hands_empty?
+		@fsm.score if player_hands_empty?
 
 		@whose_turn = not_whose_turn if can_not_whose_turn_play?
 
@@ -89,7 +89,7 @@ class Game
 		@crib << card
 	end
 
-	def score_cards cards
+	def score_cards player, cards
 		@score_client.score_hand(cards + [@cut_card])
 	end
 

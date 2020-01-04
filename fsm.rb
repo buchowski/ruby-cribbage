@@ -7,11 +7,11 @@ class FSM
 		@game = game
 	end
 
-	aasm whiny_transitions: false do
+	aasm do
 		state :waiting_to_start, initial: true
 		state :cutting_for_deal, :cutting_for_top_card
-		state :dealing, :scoring
-		state :playing
+		state :dealing, :playing
+		state :scoring_opponent_hand, :scoring_dealer_hand, :scoring_dealer_crib
 
 		event :start do
 			transitions from: :waiting_to_start, to: :cutting_for_deal
@@ -35,8 +35,10 @@ class FSM
 			end
 		end
 
-		event :begin_scoring_round do
-			transitions from: :playing, to: :scoring
+		event :score do
+			transitions from: :playing, to: :scoring_opponent_hand
+			transitions from: :scoring_opponent_hand, to: :scoring_dealer_hand
+			transitions from: :scoring_dealer_hand, to: :scoring_dealer_crib
 		end
 	end
 end
