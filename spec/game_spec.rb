@@ -65,6 +65,7 @@ RSpec.describe Game, "#add_card_to_crib" do
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to crib" do
 			game = Game.new names: ["brandon", "murphy"]
+			game.fsm = get_mock_fsm
 			game.deal
 			playerOne = game.players.first
 			playerTwo = game.players[1]

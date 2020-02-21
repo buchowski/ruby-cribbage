@@ -85,16 +85,27 @@ class Game
 		@dealer.score = 2 if @cut_card.num == "Jack"
 	end
 
-	def add_card_to_crib card
+	def add_card_to_crib player, card
+		raise "must be in playing state" if not @fsm.playing?
+		raise "player may only play card from own hand" if not player.hand.include?(card)
+
+		player.hand = player.hand - [card]
 		@crib << card
 	end
 
-	def score_cards player, cards
-		@score_client.score_hand(cards + [@cut_card])
+	def score_hand player
+		raise "not your turn" if player == @dealer && (not @fsm.scoring_dealer_hand?)
+		raise "not your turn" if player == @opponent && (not @fsm.scoring_opponent_hand?)
+
+		@fsm.score
+		player.score += @score_client.score_hand(player.hand + [@cut_card])
 	end
 
-	def score_crib
-		score_cards @crib
+	def score_crib player
+		raise "not your turn" if player != @dealer || (not @fsm.scoring_dealer_crib?)
+
+		@fsm.score
+		player.score += @score_client.score_hand(@crib + [@cut_card])
 	end
 
 	def can_play_card? card

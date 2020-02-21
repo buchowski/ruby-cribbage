@@ -21,7 +21,10 @@ end
 
 def get_mock_fsm
 	fsm = double("fsm")
-	allow(fsm).to receive(:playing?).and_return true
 	allow(fsm).to receive(:score)
+	allow(fsm).to receive(:playing?).and_return true
+	allow(fsm).to receive(:scoring_dealer_hand?).and_return true
+	allow(fsm).to receive(:scoring_dealer_crib?).and_return true
+	allow(fsm).to receive(:scoring_opponent_hand?).and_return true
 	return fsm
 end

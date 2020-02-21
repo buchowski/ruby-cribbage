@@ -9,8 +9,7 @@ class Player
 	end
 
 	def add_card_to_crib card 
-		@game.add_card_to_crib card
-		@hand = @hand - [card]
+		@game.add_card_to_crib self, card
 	end
 
 	def add_card_to_pile card
@@ -18,6 +17,6 @@ class Player
 	end
 
 	def score_hand
-		@game.score_cards self, @hand
+		@game.score_hand self
 	end
 end
