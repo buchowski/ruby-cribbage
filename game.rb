@@ -23,11 +23,13 @@ class Game
 	end
 
 	def cut_for_deal
+		@fsm.cut_for_deal
 		@dealer = @players.shuffle.first
 		@whose_turn = @dealer
 	end
 
 	def deal
+		@fsm.deal
 		@deck.cards.shuffle!
 		@players.each do |player|
 			player.hand = @deck.cards.slice!(0, 6)
@@ -84,6 +86,7 @@ class Game
 	end
 
 	def flip_top_card
+		@fsm.flip_top_card
 		@cut_card = @deck.cards.slice!(0)
 		# two for his heels
 		@dealer.score = 2 if @cut_card.num == "Jack"

@@ -15,16 +15,10 @@ class FSM
 
 		event :cut_for_deal do
 			transitions from: :waiting_to_start, to: :cutting_for_deal
-			after do
-				@game.cut_for_deal
-			end
 		end
 
 		event :deal do
 			transitions from: :cutting_for_deal, to: :dealing
-			after do
-				@game.deal
-			end
 		end
 
 		event :discard do
@@ -33,9 +27,6 @@ class FSM
 
 		event :flip_top_card do
 			transitions from: :discarding, to: :flipping_top_card
-			after do
-				@game.flip_top_card
-			end
 		end
 
 		event :play do

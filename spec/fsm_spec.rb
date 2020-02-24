@@ -12,41 +12,31 @@ RSpec.describe FSM, "fsm" do
 	it "should default to waiting_to_start" do
 		expect(@fsm.waiting_to_start?).to eql true
 	end
-	it "start should transition to cutting_for_deal" do
+	it "cut_for_deal should transition to cutting_for_deal" do
 		@fsm.cut_for_deal
 
 		expect(@fsm.cutting_for_deal?).to eql true
 	end
-	it "deal should call deal cards" do
+	it "deal should transition to dealing" do
 		@fsm.cut_for_deal
-
-		player1, player2 = @game.players
-
-		expect(player1.hand.empty?).to eql true
-		expect(player2.hand.empty?).to eql true
-
 		@fsm.deal
 
-		expect(player1.hand.empty?).to eql false
-		expect(player2.hand.empty?).to eql false
+		expect(@fsm.dealing?).to eql true
 	end
-	it "cut_for_deal should get the cut card" do
+	it "flip_top_card should transition to flipping_top_card" do
 		@fsm.cut_for_deal
 		@fsm.deal
-
-		expect(@game.cut_card.nil?).to eql true
-
+		@fsm.discard
 		@fsm.flip_top_card
 
-		expect(@game.cut_card.nil?).to eql false
+		expect(@fsm.flipping_top_card?).to eql true
 	end
-	it "cut_for_deal should transition to playing" do
+	it "play should transition to playing" do
 		@fsm.cut_for_deal
 		@fsm.deal
-
-		expect(@fsm.playing?).to eql false
-
+		@fsm.discard
 		@fsm.flip_top_card
+		@fsm.play
 
 		expect(@fsm.playing?).to eql true
 	end
