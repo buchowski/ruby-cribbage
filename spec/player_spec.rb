@@ -6,8 +6,8 @@ RSpec.describe Player, "" do
 	before(:example) do
 		@game = Game.new names: ["brandon", "murphy"]
 		@game.cut_for_deal
-		@game.fsm = get_mock_fsm
-		@player = @game.players.first
+		@game.deal
+		@game.flip_top_card
 	end
 
 	context "#add_card_to_pile" do
@@ -31,32 +31,6 @@ RSpec.describe Player, "" do
 
 			dealer.add_card_to_pile ace
 			expect(dealer.score).to eql 4
-		end
-	end
-
-	context "#score_hand" do
-		it "should score a pair and 15" do
-			cards = get_cards ["Ace", "Ace", 5, 10, 7]
-			@game.cut_card = cards.slice! 0
-			@player.hand = cards
-			score = @player.score_hand
-			expect(score).to eql 4
-		end
-
-		# it "should score a 5-card run and 15" do
-		# 	cards = get_cards [6, 3, 4, 5, "Jack"]
-		# 	@game.cut_card = cards.slice! 0
-		# 	@player.hand = cards
-		# 	score = @player.score_hand
-		# 	expect(score).to eql 6
-		# end
-
-		it "should score 3-of-a-kind & multiple 15s" do
-			cards = get_cards ["King", "Queen", 5, 5, 5]
-			@game.cut_card = cards.slice! 0
-			@player.hand = cards
-			score = @player.score_hand
-			expect(score).to eql 20
 		end
 	end
 end

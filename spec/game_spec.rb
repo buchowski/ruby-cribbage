@@ -70,7 +70,7 @@ RSpec.describe Game, "#add_card_to_crib" do
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to crib" do
 			game = Game.new names: ["brandon", "murphy"]
-			game.fsm = get_mock_fsm
+			game.cut_for_deal
 			game.deal
 			playerOne = game.players.first
 			playerTwo = game.players[1]
@@ -89,9 +89,9 @@ end
 RSpec.describe Game, "#play_card" do
 	before(:example) do
 		@game = Game.new names: ["brandon", "murphy"]
-		@game.fsm = get_mock_fsm
 		@game.cut_for_deal
 		@game.deal
+		@game.flip_top_card
 	end
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to pile" do
