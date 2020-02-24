@@ -1,9 +1,11 @@
 require './game'
+require './player'
 require './spec/test_utils'
 
 RSpec.describe Player, "" do
 	before(:example) do
 		@game = Game.new names: ["brandon", "murphy"]
+		@game.cut_for_deal
 		@game.fsm = get_mock_fsm
 		@player = @game.players.first
 	end

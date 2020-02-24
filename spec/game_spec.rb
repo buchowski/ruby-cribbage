@@ -20,7 +20,9 @@ RSpec.describe Game, "#initialize" do
 		end
 		it "should have a dealer and opponent" do
 			game = Game.new names: ["brandon", "murphy"]
-			dealer, opponent = game.players
+			game.cut_for_deal
+			dealer = game.dealer
+			opponent = game.players.find { |player| player != dealer }
 
 			expect(game.dealer).to eql dealer
 			expect(game.opponent).to eql opponent
@@ -41,7 +43,8 @@ RSpec.describe Game, "#deal" do
 			expect(game.deck.cards.size).to eql 52
 			expect(game.cut_card).to eql nil
 
-			game.deal
+			game.fsm.cut_for_deal
+			game.fsm.deal
 
 			expect(game.players[0].hand.size).to eql 6
 			expect(game.players[1].hand.size).to eql 6
@@ -51,12 +54,14 @@ RSpec.describe Game, "#deal" do
 	end
 end
 
-RSpec.describe Game, "#cut_for_top_card" do
+RSpec.describe Game, "#flip_top_card" do
 	it "gives 2 points to dealer if cut_card is Jack" do
 		game = Game.new names: ["brandon", "murphy"]
+		game.fsm.cut_for_deal
+		game.fsm.deal
 		jack_card = get_cards(["Jack"]).first
 		game.deck.cards = Array.new(13, jack_card)
-		game.cut_for_top_card
+		game.fsm.flip_top_card
 		expect(game.dealer.score).to eql 2
 	end
 end
@@ -85,11 +90,13 @@ RSpec.describe Game, "#play_card" do
 	before(:example) do
 		@game = Game.new names: ["brandon", "murphy"]
 		@game.fsm = get_mock_fsm
+		@game.cut_for_deal
+		@game.deal
 	end
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to pile" do
-			@game.deal
 			playerOne, playerTwo = @game.players
+			@game.whose_turn = playerOne
 
 			playerOne.add_card_to_pile playerOne.hand.sample
 			playerTwo.add_card_to_pile playerTwo.hand.sample

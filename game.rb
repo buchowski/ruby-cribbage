@@ -7,12 +7,10 @@ class Game
 	def initialize args
 		names = args[:names]
 		@players = names.map { |name| Player.new name, self }
-		@dealer = @players.first
 		@deck = CardDeck::Deck.new
 		@crib = []
 		@pile = []
 		@score_client = Score.new
-		@whose_turn = dealer
 		@fsm = FSM.new self
 	end
 
@@ -24,11 +22,17 @@ class Game
 		@players.difference([@whose_turn]).first
 	end
 
+	def cut_for_deal
+		@dealer = @players.shuffle.first
+		@whose_turn = @dealer
+	end
+
 	def deal
 		@deck.cards.shuffle!
 		@players.each do |player|
 			player.hand = @deck.cards.slice!(0, 6)
 		end
+		@fsm.discard
 	end
 
 	def play_card player, card
@@ -79,18 +83,24 @@ class Game
 		@pile.inject(0) { |total, card| total + card.value }
 	end
 
-	def cut_for_top_card
+	def flip_top_card
 		@cut_card = @deck.cards.slice!(0)
 		# two for his heels
 		@dealer.score = 2 if @cut_card.num == "Jack"
+		@fsm.play
+	end
+
+	def all_cards_discarded?
+		@players.all? { |player| player.hand.size == 4 }
 	end
 
 	def add_card_to_crib player, card
-		raise "must be in playing state" if not @fsm.playing?
+		raise "must be in discarding state" if not @fsm.discarding?
 		raise "player may only play card from own hand" if not player.hand.include?(card)
 
 		player.hand = player.hand - [card]
 		@crib << card
+		@fsm.flip_top_card if all_cards_discarded?
 	end
 
 	def score_hand player
