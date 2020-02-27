@@ -8,6 +8,7 @@ RSpec.describe Player, "" do
 		@game.cut_for_deal
 		@game.deal
 		@game.flip_top_card
+		@game.dealer.score = 0 # incase two_for_his_heels
 	end
 
 	context "#add_card_to_pile" do
