@@ -22,6 +22,54 @@ class Game
 		@players.difference([@whose_turn]).first
 	end
 
+	def can_play_card? card
+		pile_score + card.value <= 31
+	end
+
+	def player_hands_empty?
+		@players.map { |player| player.hand.empty? }.all?
+	end
+
+	def has_playable_card? score, cards
+		cards.map { |card| card.value + score <= 31 } .any?
+	end
+
+	def can_whose_turn_play?
+		has_playable_card? pile_score, @whose_turn.hand
+	end
+
+	def can_not_whose_turn_play?
+		has_playable_card? pile_score, not_whose_turn.hand
+	end
+
+	def can_either_player_play?
+		can_whose_turn_play? || can_not_whose_turn_play?
+	end
+
+	def pile_score
+		@pile.inject(0) { |total, card| total + card.value }
+	end
+
+	def all_cards_discarded?
+		@players.all? { |player| player.hand.size == 4 }
+	end
+
+	def is_valid_play? player, card
+		raise "must be in playing state" if not @fsm.playing?
+		raise "player must wait turn" if not player == @whose_turn
+		raise "player may only play card from own hand" if not player.hand.include?(card)
+		raise "cannot play card that pushes pile over 31" if not can_play_card? card
+		return true
+	end
+
+	def reset_pile
+		@pile = []
+	end
+
+	def two_for_his_heels
+		@dealer.score = 2
+	end
+
 	def cut_for_deal
 		@fsm.cut_for_deal
 		@dealer = @players.shuffle.first
@@ -53,48 +101,12 @@ class Game
 		return true
 	end
 
-	def is_valid_play? player, card
-		raise "must be in playing state" if not @fsm.playing?
-		raise "player must wait turn" if not player == @whose_turn
-		raise "player may only play card from own hand" if not player.hand.include?(card)
-		raise "cannot play card that pushes pile over 31" if not can_play_card? card
-		return true
-	end
-
-	def has_playable_card? score, cards
-		cards.map { |card| card.value + score <= 31 } .any?
-	end
-
-	def can_whose_turn_play?
-		has_playable_card? pile_score, @whose_turn.hand
-	end
-
-	def can_not_whose_turn_play?
-		has_playable_card? pile_score, not_whose_turn.hand
-	end
-
-	def can_either_player_play?
-		can_whose_turn_play? || can_not_whose_turn_play?
-	end
-
-	def reset_pile
-		@pile = []
-	end
-
-	def pile_score
-		@pile.inject(0) { |total, card| total + card.value }
-	end
-
 	def flip_top_card
 		@fsm.flip_top_card
 		@cut_card = @deck.cards.slice!(0)
-		# two for his heels
-		@dealer.score = 2 if @cut_card.num == "Jack"
-		@fsm.play
-	end
 
-	def all_cards_discarded?
-		@players.all? { |player| player.hand.size == 4 }
+		two_for_his_heels if @cut_card.num == "Jack"
+		@fsm.play
 	end
 
 	def add_card_to_crib player, card
@@ -121,11 +133,4 @@ class Game
 		player.score += @score_client.score_hand(@crib + [@cut_card])
 	end
 
-	def can_play_card? card
-		pile_score + card.value <= 31
-	end
-
-	def player_hands_empty?
-		@players.map { |player| player.hand.empty? }.all?
-	end
 end
