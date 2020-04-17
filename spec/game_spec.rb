@@ -109,7 +109,7 @@ RSpec.describe Game, "#play_card" do
 
 	context "when cards are added to pile" do
 		it "should increment pile_score if card can be added" do
-			ace, five, ten, five_two, ten_two, ten_three = get_cards ["Ace", 5, 10, 5, 10, 10]
+			ace, five, ten, five_two, ten_two, ten_three = get_cards_from_fresh_deck ["Ace", 5, 10, 5, 10, 10]
 			dealer, opponent = @game.whose_turn, @game.not_whose_turn
 			dealer.hand = [five, ten, ace, ten_three]
 			opponent.hand = [ten_two, five_two]
