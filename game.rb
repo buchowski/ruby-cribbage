@@ -101,10 +101,16 @@ class Game
 		return true
 	end
 
-	def flip_top_card
+	def flip_top_card test_card=nil
 		@fsm.flip_top_card
-		@cut_card = @deck.cards.slice!(0)
 
+		if test_card.nil?
+			card_index = 0
+		else
+			card_index = @deck.cards.index(test_card)
+		end
+
+		@cut_card = @deck.cards.slice!(card_index)
 		two_for_his_heels if @cut_card.num == "Jack"
 		@fsm.play
 	end

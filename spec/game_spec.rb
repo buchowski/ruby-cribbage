@@ -59,9 +59,8 @@ RSpec.describe Game, "#flip_top_card" do
 		game = Game.new names: ["brandon", "murphy"]
 		game.cut_for_deal
 		game.deal
-		jack_card = get_cards(["Jack"]).first
-		game.deck.cards = Array.new(13, jack_card)
-		game.flip_top_card
+		jack_card = game.deck.cards.filter { |card| card.num == "Jack" } .first
+		game.flip_top_card(jack_card)
 		expect(game.dealer.score).to eql 2
 	end
 end
@@ -91,6 +90,7 @@ RSpec.describe Game, "#play_card" do
 		@game = Game.new names: ["brandon", "murphy"]
 		@game.cut_for_deal
 		@game.deal
+		non_jack_card = @game.deck.cards.filter { |card| card.num != "Jack" } .first
 		@game.flip_top_card
 	end
 	context "with two players discarding 3 cards" do

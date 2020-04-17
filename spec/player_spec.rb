@@ -7,8 +7,8 @@ RSpec.describe Player, "" do
 		@game = Game.new names: ["brandon", "murphy"]
 		@game.cut_for_deal
 		@game.deal
-		@game.flip_top_card
-		@game.dealer.score = 0 # incase two_for_his_heels
+		non_jack_card = @game.deck.cards.filter { |card| card.num != "Jack" } .first
+		@game.flip_top_card(non_jack_card)
 	end
 
 	context "#add_card_to_pile" do
