@@ -76,9 +76,15 @@ class Game
 		@whose_turn = @dealer
 	end
 
-	def deal
+	def deal(&test_shuffle)
 		@fsm.deal
-		@deck.cards.shuffle!
+
+		if test_shuffle.nil?
+			@deck.cards.shuffle!
+		else
+			test_shuffle.call(@deck.cards)
+		end
+
 		@players.each do |player|
 			player.hand = @deck.cards.slice!(0, 6)
 		end
