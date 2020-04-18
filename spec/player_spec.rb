@@ -11,26 +11,26 @@ RSpec.describe Player, "" do
 		@game.flip_top_card(non_jack_card)
 	end
 
-	context "#add_card_to_pile" do
+	context "#play_card" do
 		it "should transition between players and update player scores" do
 			ace, five, ten, five_two, ten_two = get_cards_by_num ["Ace", 5, 10, 5, 10]
 			dealer, opponent = @game.whose_turn, @game.not_whose_turn
 			dealer.hand = [five, ten, ace]
 			opponent.hand = [ten_two, five_two]
 
-			dealer.add_card_to_pile five
+			dealer.play_card five
 			expect(dealer.score).to eql 0
 
-			opponent.add_card_to_pile ten_two
+			opponent.play_card ten_two
 			expect(opponent.score).to eql 2
 
-			dealer.add_card_to_pile ten
+			dealer.play_card ten
 			expect(dealer.score).to eql 2
 
-			opponent.add_card_to_pile five_two
+			opponent.play_card five_two
 			expect(opponent.score).to eql 2
 
-			dealer.add_card_to_pile ace
+			dealer.play_card ace
 			expect(dealer.score).to eql 4
 		end
 	end

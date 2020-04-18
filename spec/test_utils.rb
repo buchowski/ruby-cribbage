@@ -3,9 +3,9 @@ require './card'
 def get_cards cards, card_request
 	raise "get_cards expects a hash of cards" if !cards.is_a? Hash
 
-	return card_request.map do |card|
-		raise "Invalid card request #{card}" if cards[card.id].nil?
-		cards[card.id]
+	return card_request.map do |id|
+		raise "Invalid card request #{id}" if cards[id].nil?
+		cards[id]
 	end
 end
 
@@ -32,14 +32,8 @@ def get_cards_by_num card_by_num_request
 	end
 end
 
-def get_cards_from_new_deck card_request
-	deck_cards_hash = get_cards_hash(CardDeck::Deck.new.cards)
-
-	return get_cards deck_cards_hash, card_request
-end
-
-def frontload_deck_with card_ids
-	deck_cards_hash = get_cards_hash(CardDeck::Deck.new.cards)
+def frontload_deck_with deck, card_ids
+	deck_cards_hash = get_cards_hash(deck)
 
 	card_ids.map do |id|
 		deck_cards_hash.delete id
@@ -58,11 +52,12 @@ def generate_n_random_card_ids n
 end
 
 n = 12
-n_random_card_ids = generate_n_random_card_ids(n)
+n_random_card_ids = generate_n_random_card_ids(n + 1)
 puts "***"
 puts "some suggested test cards:"
 print "dealer_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
-print "opponent_cards = ", n_random_card_ids, "\n"
+print "opponent_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
+print "cut_card = ", "\"#{n_random_card_ids.pop}\"", "\n"
 puts "***"
 
 

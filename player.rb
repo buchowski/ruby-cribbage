@@ -12,7 +12,7 @@ class Player
 		@game.add_card_to_crib self, card
 	end
 
-	def add_card_to_pile card
+	def play_card card
 		@game.play_card self, card
 	end
 

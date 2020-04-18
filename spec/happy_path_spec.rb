@@ -2,6 +2,10 @@ require './game'
 
 RSpec.describe Score, "score_client" do
 	game = Game.new names: ["brandon", "murphy"]
+	dealer_cards = ["8h", "5s", "9c", "3h", "7d", "qc"]
+	opponent_cards = ["ah", "7c", "2d", "4c", "6h", "9s"]
+	player_card_ids = dealer_cards + opponent_cards
+	deck_hash = get_cards_hash game.deck.cards 
 
 	it "should take two players" do
 		expect(game.players.size).to eql 2
@@ -15,14 +19,20 @@ RSpec.describe Score, "score_client" do
 	end
 
 	it "should deal to players" do
-		dealer_cards = ["8h", "5s", "9c", "3h", "7d", "qc"]
-		opponent_cards = ["ah", "7c", "2d", "4c", "6h", "9s"]
-		player_cards = dealer_cards + opponent_cards
-
-		game.deal { |cards| frontload_deck_with(player_cards) }
+		game.deal { |cards| frontload_deck_with(cards, player_card_ids) }
 
 		expect(hand_ids_of game.dealer).to eql dealer_cards
 		expect(hand_ids_of game.opponent).to eql opponent_cards
 	end
 
+	it "should allow players to discard" do
+		game.dealer.add_card_to_crib deck_hash['9c']
+		game.dealer.add_card_to_crib deck_hash['3h']
+		game.opponent.add_card_to_crib deck_hash['2d']
+		game.opponent.add_card_to_crib deck_hash['4c']
+
+		expect(game.dealer.hand.size).to eql 4
+		expect(game.opponent.hand.size).to eql 4
+		expect(game.crib.size).to eql 4
+	end
 end

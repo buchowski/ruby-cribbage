@@ -98,8 +98,8 @@ RSpec.describe Game, "#play_card" do
 			playerOne, playerTwo = @game.players
 			@game.whose_turn = playerOne
 
-			playerOne.add_card_to_pile playerOne.hand.sample
-			playerTwo.add_card_to_pile playerTwo.hand.sample
+			playerOne.play_card playerOne.hand.sample
+			playerTwo.play_card playerTwo.hand.sample
 
 			expect(playerOne.hand.size).to eql 5
 			expect(playerTwo.hand.size).to eql 5
