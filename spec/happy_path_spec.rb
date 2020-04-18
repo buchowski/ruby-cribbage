@@ -5,6 +5,8 @@ describe "happy_path_integration" do
 		@game = Game.new names: ["brandon", "murphy"]
 		@deck_hash = get_cards_hash @game.deck.cards
 		@game.cut_for_deal
+		@dealer = @game.dealer
+		@opponent = @game.opponent
 	end
 
 	def deal_frontloaded_deck cards
@@ -30,16 +32,16 @@ describe "happy_path_integration" do
 		end
 
 		it "should deal to players" do
-			expect(hand_ids_of @game.dealer).to eql @dealer_cards
-			expect(hand_ids_of @game.opponent).to eql @opponent_cards
+			expect(hand_ids_of @dealer).to eql @dealer_cards
+			expect(hand_ids_of @opponent).to eql @opponent_cards
 		end
 
 		it "should let players discard" do
-			@game.dealer.discard get(["7d", "qc"])
-			@game.opponent.discard get(["6h", "9s"])
+			@dealer.discard get(["7d", "qc"])
+			@opponent.discard get(["6h", "9s"])
 
-			expect(@game.dealer.hand.size).to eql 4
-			expect(@game.opponent.hand.size).to eql 4
+			expect(@dealer.hand.size).to eql 4
+			expect(@opponent.hand.size).to eql 4
 			expect(@game.crib.size).to eql 4
 		end
 
@@ -47,13 +49,20 @@ describe "happy_path_integration" do
 			@game.flip_top_card get(@flip_card)
 		end
 
-		it "should let players play" do
-			@game.opponent.play_card get('ah')
-			@game.dealer.play_card get('8h')
-			@game.opponent.play_card get('7c')
-			@game.dealer.play_card get('5s')
-			@game.opponent.play_card get('2d')
-			expect { @game.dealer.play_card get('9c') }.to raise_error
+		it "should play round 1" do
+			@opponent.play_card get('ah')
+			@dealer.play_card get('8h')
+			@opponent.play_card get('7c')
+			@dealer.play_card get('5s')
+			@opponent.play_card get('2d') #23
+			expect { @dealer.play_card get('9c') }.to raise_error(CardTooLargeError)
+			expect { @opponent.play_card get('4c') }.to raise_error(NotYourTurnError)
+			@dealer.play_card get('3h')
+			@opponent.play_card get('4c') #30
+		end
+
+		it "should play round 2" do
+			@dealer.play_card get('9c')
 		end
 	end
 

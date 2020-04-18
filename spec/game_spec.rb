@@ -139,7 +139,7 @@ RSpec.describe Game, "#play_card" do
 			expect(is_success).to eql true
 			expect(@game.pile.size).to eql 4
 
-			expect { @game.play_card dealer, ten_three }.to raise_error
+			expect { @game.play_card dealer, ten_three }.to raise_error(NotYourTurnError)
 			expect(@game.pile_score).to eql 30
 			expect(dealer.score).to eql 2
 			expect(@game.pile.size).to eql 4

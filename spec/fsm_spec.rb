@@ -7,7 +7,7 @@ RSpec.describe FSM, "fsm" do
 		@fsm = @game.fsm
 	end
 	it "should raise error if invalid transition" do
-		expect{ @fsm.deal }.to raise_error
+		expect{ @fsm.deal }.to raise_error(AASM::InvalidTransition)
 	end
 	it "should default to waiting_to_start" do
 		expect(@fsm.waiting_to_start?).to eql true
