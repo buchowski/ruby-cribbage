@@ -73,7 +73,7 @@ class Game
 	def cut_for_deal
 		@fsm.cut_for_deal
 		@dealer = @players.shuffle.first
-		@whose_turn = @dealer
+		@whose_turn = @opponent
 	end
 
 	def deal(&test_shuffle)
@@ -127,7 +127,6 @@ class Game
 
 		player.hand = player.hand - [card]
 		@crib << card
-		@fsm.flip_top_card if all_cards_discarded?
 	end
 
 	def score_hand player

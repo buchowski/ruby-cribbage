@@ -1,12 +1,13 @@
 require './game'
 
-RSpec.describe Score, "score_client" do
+RSpec.describe Score, "happy_path_integration" do
+
 	game = Game.new names: ["brandon", "murphy"]
 	deck_hash = get_cards_hash game.deck.cards
 
 	dealer_cards = ["8h", "5s", "9c", "3h", "7d", "qc"]
 	opponent_cards = ["ah", "7c", "2d", "4c", "6h", "9s"]
-	player_card_ids = dealer_cards + opponent_cards
+	flip_card = "8s"
 
 	it "should take two players" do
 		expect(game.players.size).to eql 2
@@ -20,13 +21,15 @@ RSpec.describe Score, "score_client" do
 	end
 
 	it "should deal to players" do
-		game.deal { |cards| frontload_deck_with(cards, player_card_ids) }
+		game.deal do |cards|
+			frontload_deck_with(cards, dealer_cards + opponent_cards)
+		end
 
 		expect(hand_ids_of game.dealer).to eql dealer_cards
 		expect(hand_ids_of game.opponent).to eql opponent_cards
 	end
 
-	it "should allow players to discard" do
+	it "should let players discard" do
 		nine, three, two, four = get_cards deck_hash, ['9c', '3h', '2d', '4c']
 		game.dealer.discard [nine, three]
 		game.opponent.discard [two, four]
@@ -35,4 +38,9 @@ RSpec.describe Score, "score_client" do
 		expect(game.opponent.hand.size).to eql 4
 		expect(game.crib.size).to eql 4
 	end
+
+	it "should flip_top_card" do
+		game.flip_top_card deck_hash[flip_card]
+	end
+
 end
