@@ -121,7 +121,7 @@ class Game
 		@fsm.play
 	end
 
-	def add_card_to_crib player, card
+	def discard player, card
 		raise "must be in discarding state" if not @fsm.discarding?
 		raise "player may only play card from own hand" if not player.hand.include?(card)
 

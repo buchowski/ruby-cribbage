@@ -65,7 +65,7 @@ RSpec.describe Game, "#flip_top_card" do
 	end
 end
 
-RSpec.describe Game, "#add_card_to_crib" do
+RSpec.describe Game, "#discard" do
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to crib" do
 			game = Game.new names: ["brandon", "murphy"]
@@ -74,9 +74,9 @@ RSpec.describe Game, "#add_card_to_crib" do
 			playerOne = game.players.first
 			playerTwo = game.players[1]
 
-			playerOne.add_card_to_crib playerOne.hand.sample
-			playerOne.add_card_to_crib playerOne.hand.sample
-			playerTwo.add_card_to_crib playerTwo.hand.sample
+			playerOne.discard playerOne.hand.sample
+			playerOne.discard playerOne.hand.sample
+			playerTwo.discard playerTwo.hand.sample
 
 			expect(playerOne.hand.size).to eql 4
 			expect(playerTwo.hand.size).to eql 5

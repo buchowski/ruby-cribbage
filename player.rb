@@ -8,8 +8,10 @@ class Player
 		@score = 0
 	end
 
-	def add_card_to_crib card 
-		@game.add_card_to_crib self, card
+	def discard cards
+		[cards].flatten.each do |card| 
+			@game.discard self, card
+		end
 	end
 
 	def play_card card
