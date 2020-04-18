@@ -38,3 +38,31 @@ def get_cards_from_new_deck card_request
 	return get_cards deck_cards_hash, card_request
 end
 
+def frontload_deck_with card_ids
+	deck_cards_hash = get_cards_hash(CardDeck::Deck.new.cards)
+
+	card_ids.map do |id|
+		deck_cards_hash.delete id
+	end
+	.concat(deck_cards_hash.values)
+end
+
+def hand_ids_of player
+	player.hand.map { |card| card.id }
+end
+
+def generate_n_random_card_ids n 
+	deck_cards_hash = get_cards_hash(CardDeck::Deck.new.cards)
+
+	deck_cards_hash.keys.shuffle.slice(0, n)
+end
+
+n = 12
+n_random_card_ids = generate_n_random_card_ids(n)
+puts "***"
+puts "some suggested test cards:"
+print "dealer_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
+print "opponent_cards = ", n_random_card_ids, "\n"
+puts "***"
+
+

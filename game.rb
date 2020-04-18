@@ -82,12 +82,12 @@ class Game
 		if test_shuffle.nil?
 			@deck.cards.shuffle!
 		else
-			test_shuffle.call(@deck.cards)
+			@deck.cards = test_shuffle.call(@deck.cards)
 		end
 
-		@players.each do |player|
-			player.hand = @deck.cards.slice!(0, 6)
-		end
+		@dealer.hand = @deck.cards.slice!(0, 6)
+		opponent.hand = @deck.cards.slice!(0, 6)
+
 		@fsm.discard
 	end
 
@@ -132,7 +132,7 @@ class Game
 
 	def score_hand player
 		raise "not your turn" if player == @dealer && (not @fsm.scoring_dealer_hand?)
-		raise "not your turn" if player == @opponent && (not @fsm.scoring_opponent_hand?)
+		raise "not your turn" if player == opponent && (not @fsm.scoring_opponent_hand?)
 
 		@fsm.score
 		player.score += @score_client.score_hand(player.hand + [@cut_card])
