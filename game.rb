@@ -20,6 +20,7 @@ class Game
 		@deck = CardDeck::Deck.new
 		@crib = []
 		@pile = []
+		@players.each { |player| player.hand = [] }
 	end
 
 	def opponent
@@ -150,6 +151,7 @@ class Game
 
 		player.score += @score_client.score_hand(@crib + [@cut_card])
 		reset_cards
+		@dealer = opponent
 	end
 
 end
