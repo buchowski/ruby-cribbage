@@ -55,9 +55,9 @@ n = 12
 n_random_card_ids = generate_n_random_card_ids(n + 1)
 puts "***"
 puts "some suggested test cards:"
-print "dealer_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
-print "opponent_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
-print "cut_card = ", "\"#{n_random_card_ids.pop}\"", "\n"
+print "@dealer_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
+print "@opponent_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
+print "@flip_card = ", "\"#{n_random_card_ids.pop}\"", "\n"
 puts "***"
 
 

@@ -130,4 +130,52 @@ describe "happy_path_integration" do
 		end
 	end
 
+	context "third hand" do
+		before(:all) do
+			@dealer_cards = ["8c", "10s", "2c", "2h", "6s", "jd"]
+			@opponent_cards = ["4h", "ks", "8h", "kh", "3c", "qd"]
+			@flip_card = "3s"
+			@dealer = @game.dealer
+			@opponent = @game.opponent
+			@deck_hash = get_cards_hash @game.deck.cards
+			deal_frontloaded_deck(@dealer_cards + @opponent_cards)
+		end
+
+		it "should deal to players" do
+			expect(hand_ids_of @dealer).to eql @dealer_cards
+			expect(hand_ids_of @opponent).to eql @opponent_cards
+		end
+
+		it "should let players discard" do
+			@dealer.discard get(["6s", "jd"])
+			@opponent.discard get(["3c", "qd"])
+		end
+
+		it "should flip_top_card" do
+			@game.flip_top_card get(@flip_card)
+		end
+
+		it "should play round 1" do
+			@opponent.play_card get('4h')
+			@dealer.play_card get('8c')
+			@opponent.play_card get('ks') #22
+			expect { @dealer.play_card get('10s') }.to raise_error(CardTooLargeError)
+			@dealer.play_card get('2c')
+			# opponent doesn't have a playable card since 8h and kh are too large
+			expect { @opponent.play_card get('8h') }.to raise_error(NotYourTurnError)
+			@dealer.play_card get('2h') # pair
+		end
+
+		it "should play round 2" do
+			@opponent.play_card get('8h')
+			@dealer.play_card get('10s')
+			@opponent.play_card get('kh')
+		end
+
+		it "should scores hands and crib" do
+			@game.score_hand @opponent
+			@game.score_hand @dealer
+			@game.score_crib @dealer
+		end
+	end
 end
