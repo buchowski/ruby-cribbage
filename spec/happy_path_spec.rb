@@ -64,6 +64,34 @@ describe "happy_path_integration" do
 		it "should play round 2" do
 			@dealer.play_card get('9c')
 		end
+
+		it "should score opponent's hand" do
+			expect { @game.score_hand @dealer }.to raise_error(NotYourTurnError)
+			@game.score_hand @opponent
+		end
+
+		it "should score dealer's hand" do
+			@game.score_hand @dealer
+		end
+
+		it "should score dealer's crib" do
+			expect { @game.score_crib @opponent }.to raise_error(NotYourTurnError)
+			@game.score_crib @dealer
+		end
+	end
+
+	context "second hand" do
+		before(:all) do
+			@dealer_cards = ["2h", "9d", "7c", "2s", "kd", "6d"]
+			@opponent_cards = ["10d", "ad", "jh", "5h", "4h", "5d"]
+			@flip_card = "qd"
+			deal_frontloaded_deck(@dealer_cards + @opponent_cards)
+		end
+
+		it "should deal to players" do
+			expect(hand_ids_of @dealer).to eql @dealer_cards
+			expect(hand_ids_of @opponent).to eql @opponent_cards
+		end
 	end
 
 end

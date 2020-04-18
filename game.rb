@@ -10,11 +10,16 @@ class Game
 	def initialize args
 		names = args[:names]
 		@players = names.map { |name| Player.new name, self }
+		@score_client = Score.new
+		@fsm = FSM.new self
+
+		reset_cards
+	end
+
+	def reset_cards
 		@deck = CardDeck::Deck.new
 		@crib = []
 		@pile = []
-		@score_client = Score.new
-		@fsm = FSM.new self
 	end
 
 	def opponent
@@ -143,8 +148,8 @@ class Game
 	def score_crib player
 		raise NotYourTurnError if player != @dealer || (not @fsm.scoring_dealer_crib?)
 
-		@fsm.score
 		player.score += @score_client.score_hand(@crib + [@cut_card])
+		reset_cards
 	end
 
 end

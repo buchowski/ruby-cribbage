@@ -19,6 +19,7 @@ class FSM
 
 		event :deal do
 			transitions from: :cutting_for_deal, to: :dealing
+			transitions from: :scoring_dealer_crib, to: :dealing
 		end
 
 		event :discard do
