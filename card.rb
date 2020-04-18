@@ -11,4 +11,23 @@ class CardDeck::Card # Represents a card in the deck
 			when "Joker" then 10
 		end
 	end
+
+	def id
+		suit = case @suit
+				when Hearts then 'h'
+				when Spades then 's'
+				when Diamonds then 'd'
+				when Clubs then 'c'
+			end
+		num = case @num
+				when "Ace" then 'a'
+				when "Jack" then 'j'
+				when "Queen" then 'q'
+				when "King" then 'k'
+				when "Joker" then 'r'
+				else @num.to_s
+			end
+
+		suit + num
+	end
 end

@@ -13,7 +13,7 @@ RSpec.describe Player, "" do
 
 	context "#add_card_to_pile" do
 		it "should transition between players and update player scores" do
-			ace, five, ten, five_two, ten_two = get_cards_from_fresh_deck ["Ace", 5, 10, 5, 10]
+			ace, five, ten, five_two, ten_two = get_cards_by_num ["Ace", 5, 10, 5, 10]
 			dealer, opponent = @game.whose_turn, @game.not_whose_turn
 			dealer.hand = [five, ten, ace]
 			opponent.hand = [ten_two, five_two]
