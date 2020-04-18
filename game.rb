@@ -73,7 +73,7 @@ class Game
 	def cut_for_deal
 		@fsm.cut_for_deal
 		@dealer = @players.shuffle.first
-		@whose_turn = @opponent
+		@whose_turn = opponent
 	end
 
 	def deal(&test_shuffle)
