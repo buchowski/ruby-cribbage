@@ -4,13 +4,6 @@ require './score'
 class NotYourTurnError < RuntimeError; end
 class CardTooLargeError < RuntimeError; end
 
-# def get_cards_hash cards
-# 	cards.inject({}) do |card_map, card| 
-# 		card_map[card.id] = card
-# 		card_map
-# 	end
-# end
-
 class Game
 	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm
 
@@ -31,10 +24,12 @@ class Game
 		end
 	end
 
-	def reset_cards
-		@crib = []
-		@pile = []
-		@players.each { |player| player.hand = {} }
+	def self.get_hand_hash card_ids
+		card_ids.to_h { |id| [id, true] }
+	end
+
+	def undealt_card_ids
+		@deck.keys.difference(@dealer.hand.keys, opponent.hand.keys)
 	end
 
 	def opponent
@@ -86,8 +81,11 @@ class Game
 		return true
 	end
 
-	def two_for_his_heels
-		@dealer.score = 2
+	def reset_cards
+		@cut_card = nil
+		@crib = []
+		@pile = []
+		@players.each { |player| player.hand = {} }
 	end
 
 	def cut_for_deal
@@ -100,8 +98,8 @@ class Game
 		@fsm.deal
 
 		random_card_ids = @deck.keys.shuffle.slice(0, 12)
-		@dealer.hand = random_card_ids.slice!(0, 6).to_h { |id| [id, true] }
-		opponent.hand = random_card_ids.slice!(0, 6).to_h { |id| [id, true] }
+		@dealer.hand = self.class.get_hand_hash random_card_ids.slice!(0, 6)
+		opponent.hand = self.class.get_hand_hash random_card_ids.slice!(0, 6)
 
 		@fsm.discard
 	end
@@ -112,7 +110,6 @@ class Game
 		player.hand[card_id] = false
 		@pile << card_id
 		is_last_card = (not can_either_player_play?)
-		# player.score += @score_client.get_points(@pile, pile_score, is_last_card)
 
 		@pile = [] if is_last_card
 		@fsm.score if player_hands_empty?
@@ -122,7 +119,7 @@ class Game
 
 	def flip_top_card
 		@fsm.flip_top_card
-		@cut_card = @deck.values.sample
+		@cut_card = undealt_card_ids.sample 
 		@whose_turn = opponent
 		@fsm.play
 	end
@@ -140,13 +137,11 @@ class Game
 		raise NotYourTurnError if player == opponent && (not @fsm.scoring_opponent_hand?)
 
 		@fsm.score
-		# player.score += @score_client.score_hand(player.hand + [@cut_card])
 	end
 
 	def score_crib player
 		raise NotYourTurnError if player != @dealer || (not @fsm.scoring_dealer_crib?)
 
-		# player.score += @score_client.score_hand(@crib + [@cut_card])
 		reset_cards
 		@dealer = opponent
 	end
