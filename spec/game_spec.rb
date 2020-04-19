@@ -54,16 +54,6 @@ RSpec.describe Game, "#deal" do
 	end
 end
 
-RSpec.describe Game, "#flip_top_card" do
-	it "transitions to playing state" do
-		game = Game.new names: ["brandon", "murphy"]
-		game.cut_for_deal
-		game.deal
-		game.flip_top_card
-		expect(game.fsm.playing?).to eql true
-	end
-end
-
 RSpec.describe Game, "#discard" do
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to crib" do
@@ -82,68 +72,6 @@ RSpec.describe Game, "#discard" do
 			expect(game.crib.size).to eql 3
 		end
 	end
-end
-
-RSpec.describe Game, "#play_card" do
-	before(:example) do
-		@game = Game.new names: ["brandon", "murphy"]
-		@game.cut_for_deal
-		@game.deal
-   		@game.flip_top_card
-   	end
-
-	context "with two players discarding 3 cards" do
-		it "should move cards from hands to pile" do
-			playerOne, playerTwo = @game.players
-			@game.whose_turn = playerOne
-
-			playerOne.play_card playerOne.hand.keys.sample
-			playerTwo.play_card playerTwo.hand.keys.sample
-
-			expect(playerOne.hand.values.count { |is_still_in_hand| is_still_in_hand }).to eql 5
-			expect(playerTwo.hand.values.count { |is_still_in_hand| is_still_in_hand }).to eql 5
-			expect(@game.pile.size).to eql 2
-		end
-	end
-
-	# context "increment pile_score" do
-	# 	it "should if card can be added" do
-	# 		ace, five, ten, five_two, ten_two, ten_three = get_card_ids_by_num ["Ace", 5, 10, 5, 10, 10]
-	# 		dealer, opponent = @game.dealer, @game.opponent
-	# 		opponent.hand = [five, ten, ace, ten_three].to_h { |card_id| [card_id, true] }
-	# 		dealer.hand = [ten_two, five_two].to_h { |card_id| [card_id, true] }
-
-	# 		@game.play_card opponent, ten
-	# 		expect(@game.pile_score).to eql 10
-	# 		expect(opponent.score).to eql 0
-	# 		expect(@game.pile.size).to eql 1
-
-	# 		@game.play_card dealer, five_two
-	# 		expect(@game.pile_score).to eql 15
-	# 		expect(dealer.score).to eql 2
-	# 		expect(@game.pile.size).to eql 2
-
-	# 		@game.play_card opponent, five
-	# 		expect(@game.pile_score).to eql 20
-	# 		expect(opponent.score).to eql 2
-	# 		expect(@game.pile.size).to eql 3
-
-	# 		@game.play_card dealer, ten_two
-	# 		expect(@game.pile_score).to eql 30
-	# 		expect(dealer.score).to eql 2
-	# 		expect(@game.pile.size).to eql 4
-
-	# 		expect { @game.play_card dealer, ten_three }.to raise_error(NotYourTurnError)
-	# 		expect(@game.pile_score).to eql 30
-	# 		expect(dealer.score).to eql 2
-	# 		expect(@game.pile.size).to eql 4
-
-	# 		 @game.play_card opponent, ace
-	# 		expect(@game.pile_score).to eql 0 
-	# 		expect(opponent.score).to eql 4
-	# 		expect(@game.pile.size).to eql 0
-	# 	end
-	# end
 end
 
 

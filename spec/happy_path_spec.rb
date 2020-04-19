@@ -63,8 +63,7 @@ describe "happy_path_integration" do
 		end
 
 		it "should score dealer's crib" do
-			expect { @game.score_crib @opponent }.to raise_error(NotYourTurnError)
-			@game.score_crib @dealer
+			@game.score_crib
 		end
 	end
 
@@ -115,7 +114,7 @@ describe "happy_path_integration" do
 		it "should scores hands and crib" do
 			@game.score_hand @opponent
 			@game.score_hand @dealer
-			@game.score_crib @dealer
+			@game.score_crib
 		end
 	end
 
@@ -166,7 +165,7 @@ describe "happy_path_integration" do
 		it "should scores hands and crib" do
 			@game.score_hand @opponent
 			@game.score_hand @dealer
-			@game.score_crib @dealer
+			@game.score_crib
 		end
 	end
 
@@ -214,7 +213,7 @@ describe "happy_path_integration" do
 		it "should scores hands and crib" do
 			@game.score_hand @opponent
 			@game.score_hand @dealer
-			@game.score_crib @dealer
+			@game.score_crib
 		end
 	end
 end

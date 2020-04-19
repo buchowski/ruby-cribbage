@@ -3,6 +3,7 @@ require './score'
 
 class NotYourTurnError < RuntimeError; end
 class CardTooLargeError < RuntimeError; end
+class WrongStateError < RuntimeError; end
 
 class Game
 	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm
@@ -74,7 +75,7 @@ class Game
 	end
 
 	def is_valid_play? player, card_id
-		raise "must be in playing state" if not @fsm.playing?
+		raise WrongStateError if not @fsm.playing?
 		raise NotYourTurnError if not player == @whose_turn
 		raise "player may only play card from own hand" if not player.hand[card_id]
 		raise CardTooLargeError if not can_play_card? card_id
@@ -118,18 +119,21 @@ class Game
 	end
 
 	def flip_top_card
-		@fsm.flip_top_card
+		raise WrongStateError if not @fsm.flipping_top_card?
+
 		@cut_card = undealt_card_ids.sample 
 		@whose_turn = opponent
 		@fsm.play
 	end
 
 	def discard player, card_id
-		raise "must be in discarding state" if not @fsm.discarding?
+		raise WrongStateError if not @fsm.discarding?
 		raise "player may only play card from own hand" if not player.hand[card_id]
 
 		player.hand.delete(card_id)
 		@crib << card_id
+
+		@fsm.flip_top_card if all_cards_discarded?
 	end
 
 	def score_hand player
@@ -139,8 +143,8 @@ class Game
 		@fsm.score
 	end
 
-	def score_crib player
-		raise NotYourTurnError if player != @dealer || (not @fsm.scoring_dealer_crib?)
+	def score_crib
+		raise WrongStateError if not @fsm.scoring_dealer_crib?
 
 		reset_cards
 		@dealer = opponent
