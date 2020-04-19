@@ -1,20 +1,5 @@
 require './card'
-
-def get_cards cards, card_request
-	raise "get_cards expects a hash of cards" if !cards.is_a? Hash
-
-	return card_request.map do |id|
-		raise "Invalid card request #{id}" if cards[id].nil?
-		cards[id]
-	end
-end
-
-def get_cards_hash cards
-	cards.inject({}) do |card_map, card| 
-		card_map[card.id] = card
-		card_map
-	end
-end
+require './game'
 
 def get_card_num_hash cards
 	cards.inject({}) do |card_num_map, card|
@@ -32,21 +17,12 @@ def get_cards_by_num card_by_num_request
 	end
 end
 
-def frontload_deck_with deck, card_ids
-	deck_cards_hash = get_cards_hash(deck)
-
-	card_ids.map do |id|
-		deck_cards_hash.delete id
-	end
-	.concat(deck_cards_hash.values)
-end
-
-def hand_ids_of player
-	player.hand.map { |card| card.id }
+def get_card_ids_by_num card_by_num_request
+	get_cards_by_num(card_by_num_request).map { |card| card.id }
 end
 
 def generate_n_random_card_ids n 
-	deck_cards_hash = get_cards_hash(CardDeck::Deck.new.cards)
+	deck_cards_hash = Game.get_cards_hash(CardDeck::Deck.new.cards)
 
 	deck_cards_hash.keys.shuffle.slice(0, n)
 end
@@ -59,5 +35,3 @@ print "@dealer_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
 print "@opponent_cards = ", n_random_card_ids.slice!(0, n/2), "\n"
 print "@flip_card = ", "\"#{n_random_card_ids.pop}\"", "\n"
 puts "***"
-
-
