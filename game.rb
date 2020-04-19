@@ -128,6 +128,7 @@ class Game
 		@cut_card = @deck.cards.slice!(card_index)
 		two_for_his_heels if @cut_card.num == "Jack"
 		@fsm.play
+		@whose_turn = opponent
 	end
 
 	def discard player, card

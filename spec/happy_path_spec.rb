@@ -178,4 +178,50 @@ describe "happy_path_integration" do
 			@game.score_crib @dealer
 		end
 	end
+
+	context "fourth hand" do
+		before(:all) do
+			@dealer_cards = ["8d", "4s", "9d", "6c", "qh", "7c"]
+			@opponent_cards = ["ah", "js", "2s", "5h", "3d", "kc"]
+			@flip_card = "9c"
+			@dealer = @game.dealer
+			@opponent = @game.opponent
+			@deck_hash = get_cards_hash @game.deck.cards
+			deal_frontloaded_deck(@dealer_cards + @opponent_cards)
+		end
+
+		it "should deal to players" do
+			expect(hand_ids_of @dealer).to eql @dealer_cards
+			expect(hand_ids_of @opponent).to eql @opponent_cards
+		end
+
+		it "should let players discard" do
+			@dealer.discard get(["qh", "7c"])
+			@opponent.discard get(["3d", "kc"])
+		end
+
+		it "should flip_top_card" do
+			@game.flip_top_card get(@flip_card)
+		end
+
+		it "should play round 1" do
+			@opponent.play_card get('ah')
+			@dealer.play_card get('4s')
+			@opponent.play_card get('js') #15
+			@dealer.play_card get('8d')
+			@opponent.play_card get('2s')
+			@dealer.play_card get('6c') #31
+		end
+
+		it "should play round 2" do
+			@opponent.play_card get('5h')
+			@dealer.play_card get('9d')
+		end
+
+		it "should scores hands and crib" do
+			@game.score_hand @opponent
+			@game.score_hand @dealer
+			@game.score_crib @dealer
+		end
+	end
 end
