@@ -1,6 +1,22 @@
 require "sum_all_number_combinations"
 
 class Score
+	def initialize game
+		@game = game
+	end
+
+	def score_play
+
+	end
+
+	def score_crib
+
+	end
+
+	def score_hands
+
+	end
+
 	def get_points pile, pile_score, is_last_card
 		points = 0
 		points = 1 if pile_score == 31

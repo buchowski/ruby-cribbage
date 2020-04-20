@@ -3,10 +3,6 @@ require 'aasm'
 class FSM
 	include AASM
 
-	def initialize game
-		@game = game
-	end
-
 	aasm do
 		state :waiting_to_start, initial: true
 		state :cutting_for_deal, :flipping_top_card

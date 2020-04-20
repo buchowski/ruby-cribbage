@@ -11,8 +11,8 @@ class Game
 	def initialize args
 		names = args[:names]
 		@players = names.map { |name| Player.new name, self }
-		@score_client = Score.new
-		@fsm = FSM.new self
+		@score_client = Score.new self
+		@fsm = FSM.new 
 		@deck = self.class.get_cards_hash CardDeck::Deck.new.cards
 
 		reset_cards
@@ -91,14 +91,14 @@ class Game
 
 	def cut_for_deal
 		@fsm.cut_for_deal
-		@dealer = @players.shuffle.first
+		@dealer = @players.sample
 		@whose_turn = opponent
 	end
 
 	def deal
 		@fsm.deal
 
-		random_card_ids = @deck.keys.shuffle.slice(0, 12)
+		random_card_ids = @deck.keys.sample 12
 		@dealer.hand = self.class.get_hand_hash random_card_ids.slice!(0, 6)
 		opponent.hand = self.class.get_hand_hash random_card_ids.slice!(0, 6)
 
@@ -110,11 +110,10 @@ class Game
 
 		player.hand[card_id] = false
 		@pile << card_id
-		is_last_card = (not can_either_player_play?)
+		@score_client.score_play
 
-		@pile = [] if is_last_card
+		@pile = [] if not can_either_player_play?
 		@fsm.score if player_hands_empty?
-
 		@whose_turn = not_whose_turn if can_not_whose_turn_play?
 	end
 
@@ -123,6 +122,8 @@ class Game
 
 		@cut_card = undealt_card_ids.sample 
 		@whose_turn = opponent
+		@score_client.score_crib
+		@score_client.score_hands
 		@fsm.play
 	end
 
