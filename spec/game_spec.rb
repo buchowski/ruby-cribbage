@@ -2,24 +2,10 @@ require './game'
 require './player'
 
 RSpec.describe Game, "#initialize" do
-	context "with zero names" do
-		it "should throw an error" do
-			expect{Game.new}.to raise_error ArgumentError
-		end
-	end
-	context "with one name" do
-		it "should have one player" do
-			game = Game.new names: ["brandon"]
-			expect(game.players.size).to eql 1
-		end
-	end
 	context "with two names" do
-		it "should have two players" do
-			game = Game.new names: ["brandon", "murphy"]
-			expect(game.players.size).to eql 2
-		end
 		it "should have a dealer and opponent" do
-			game = Game.new names: ["brandon", "murphy"]
+			game = Game.new
+			expect(game.players.size).to eql 2
 			game.cut_for_deal
 			dealer = game.dealer
 			opponent = game.players.find { |player| player != dealer }
@@ -38,7 +24,7 @@ end
 RSpec.describe Game, "#deal" do
 	context "with two players" do
 		it "deals 6 cards to each player & cuts card" do
-			game = Game.new names: ["brandon", "murphy"]
+			game = Game.new
 
 			expect(game.deck.keys.size).to eql 52
 			expect(game.cut_card).to eql nil
@@ -57,7 +43,7 @@ end
 RSpec.describe Game, "#discard" do
 	context "with two players discarding 3 cards" do
 		it "should move cards from hands to crib" do
-			game = Game.new names: ["brandon", "murphy"]
+			game = Game.new
 			game.cut_for_deal
 			game.deal
 			playerOne = game.players.first

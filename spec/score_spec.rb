@@ -3,7 +3,7 @@ require './spec/test_utils'
 
 RSpec.describe Score, "score_client" do
 	before(:example) do
-		@score_client = Score.new Game.new names: ["brandon", "murphy"]
+		@score_client = Score.new Game.new
 		@aces = get_cards_by_num ["Ace", "Ace", "Ace"]
 		@jacks = get_cards_by_num ["Jack", "Jack"]
 		@fives = get_cards_by_num [5, 5, 5, 5]

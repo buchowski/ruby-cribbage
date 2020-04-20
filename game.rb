@@ -8,9 +8,8 @@ class WrongStateError < RuntimeError; end
 class Game
 	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm
 
-	def initialize args
-		names = args[:names]
-		@players = names.map { |name| Player.new name, self }
+	def initialize args=nil
+		@players = 2.times.map { || Player.new self }
 		@score_client = Score.new self
 		@fsm = FSM.new 
 		@deck = self.class.get_cards_hash CardDeck::Deck.new.cards

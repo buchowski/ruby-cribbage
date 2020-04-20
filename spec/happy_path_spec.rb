@@ -2,7 +2,7 @@ require './game'
 
 describe "happy_path_integration" do
 	before(:all) do
-		@game = Game.new names: ["brandon", "murphy"]
+		@game = Game.new
 		@game.cut_for_deal
 	end
 

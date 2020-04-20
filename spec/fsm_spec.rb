@@ -3,7 +3,7 @@ require './spec/test_utils'
 
 RSpec.describe FSM, "fsm" do
 	before do
-		@game = Game.new names: ["brandon", "murphy"]
+		@game = Game.new
 		@fsm = @game.fsm
 	end
 	it "should raise error if invalid transition" do
