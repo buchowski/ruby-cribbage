@@ -4,14 +4,10 @@ class FSM
 	include AASM
 
 	aasm do
-		state :waiting_to_start, initial: true
-		state :cutting_for_deal, :flipping_top_card
+		state :cutting_for_deal, initial: true
+		state :flipping_top_card
 		state :discarding, :dealing, :playing
 		state :scoring_opponent_hand, :scoring_dealer_hand, :scoring_dealer_crib
-
-		event :cut_for_deal do
-			transitions from: :waiting_to_start, to: :cutting_for_deal
-		end
 
 		event :deal do
 			transitions from: :cutting_for_deal, to: :dealing
