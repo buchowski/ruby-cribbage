@@ -1,7 +1,8 @@
 class Player
-	attr_accessor :hand
+	attr_accessor :id, :hand
 
-	def initialize game
+	def initialize game, id
+		@id = id
 		@game = game
 		@hand = []
 	end

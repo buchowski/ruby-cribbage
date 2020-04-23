@@ -3,17 +3,40 @@ require "sum_all_number_combinations"
 class Score
 	def initialize game
 		@game = game
+		@scorecards = {}
 	end
 
-	def score_play
+	def get_cards card_ids
+		card_ids.map { |id| @game.deck[id] }
+	end
 
+	def empty_scorecard
+		{crib: {}, hand: {}}
+	end
+
+	def get_scorecard player
+		@scorecards[@game.round] = @scorecards[@game.round] || {}
+		@scorecards[@game.round][player.id] = @scorecards[@game.round][player.id] || empty_scorecard
+		@scorecards[@game.round][player.id]
 	end
 
 	def score_crib
-
+		cards = get_cards(@game.crib + [@game.cut_card])
+		get_scorecard(@game.dealer)[:crib] = score_hand cards
 	end
 
 	def score_hands
+		@game.players.each do |player|
+			cards = get_cards(player.hand.keys + [@game.cut_card])
+			get_scorecard(player)[:hand] = score_hand cards
+		end
+	end
+
+	def do_we_have_a_winner
+
+	end
+
+	def score_play player
 
 	end
 
@@ -66,6 +89,7 @@ class Score
 	end
 
 	def score_hand cards
+		# return a hash with total possible score and set of all possible scores
 		# 15, 31, 2k, 3k, 4k, flush, straight (small?)
 		n_of_kind_score = score_n_of_a_kind cards
 		sum_score = score_sums cards

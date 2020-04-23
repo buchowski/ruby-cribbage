@@ -6,14 +6,15 @@ class CardTooLargeError < RuntimeError; end
 class WrongStateError < RuntimeError; end
 
 class Game
-	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm, :points_to_win
+	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm, :points_to_win, :round
 
 	def initialize args=nil
-		@players = 2.times.map { || Player.new self }
+		@players = 2.times.map { |id| Player.new self, id.to_s }
 		@points_to_win = 121
 		@score_client = Score.new self
 		@fsm = FSM.new 
 		@deck = self.class.get_cards_hash CardDeck::Deck.new.cards
+		@round = 0
 
 		reset_cards
 	end
@@ -83,6 +84,7 @@ class Game
 	end
 
 	def reset_cards
+		@round += 1
 		@cut_card = nil
 		@crib = []
 		@pile = []
@@ -112,7 +114,7 @@ class Game
 
 		player.hand[card_id] = false
 		@pile << card_id
-		@score_client.score_play
+		@score_client.score_play player
 
 		@pile = [] if not can_either_player_play?
 		@fsm.score if player_hands_empty?
@@ -152,6 +154,10 @@ class Game
 		reset_cards
 		@dealer = opponent
 		@fsm.deal
+	end
+
+	def game_over
+
 	end
 
 end
