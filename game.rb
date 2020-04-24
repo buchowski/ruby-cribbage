@@ -51,7 +51,7 @@ class Game
 	end
 
 	def has_playable_card? hand
-		card_ids = hand.keys.filter { |card_id| hand[card_id] }
+		card_ids = hand.keys.filter { |card_id| hand[card_id] } #false has been played
 		card_ids.map { |card_id| can_play_card?(card_id) } .any?
 	end
 
@@ -114,9 +114,10 @@ class Game
 
 		player.hand[card_id] = false
 		@pile << card_id
-		@score_client.score_play player
+		is_last_card = (not can_either_player_play?)
+		@score_client.score_play(@pile, is_last_card, player)
 
-		@pile = [] if not can_either_player_play?
+		@pile = [] if is_last_card
 		@fsm.score if player_hands_empty?
 		@whose_turn = not_whose_turn if can_not_whose_turn_play?
 	end

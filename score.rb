@@ -15,7 +15,7 @@ class Score
 	end
 
 	def get_scorecard player
-		@scorecards[@game.round] = @scorecards[@game.round] || {}
+		@scorecards[@game.round] = @scorecards[@game.round] || {play: []}
 		@scorecards[@game.round][player.id] = @scorecards[@game.round][player.id] || empty_scorecard
 		@scorecards[@game.round][player.id]
 	end
@@ -32,21 +32,35 @@ class Score
 		end
 	end
 
-	def do_we_have_a_winner
-
+	def score_hand cards
+		# return a hash with total possible score and set of all possible scores
+		# 15, 31, 2k, 3k, 4k, flush, straight (small?)
+		n_of_kind_score = score_n_of_a_kind cards
+		sum_score = score_sums cards
+		total_score = n_of_kind_score + sum_score
+		total_score
 	end
 
-	def score_play player
-
+	def score_play pile, is_last_card, player 
+		@scorecards[@game.round] = @scorecards[@game.round] || {play: []}
+		points = get_pile_points(pile, is_last_card)
+		@scorecards[@game.round][:play] << {
+			points: points,
+			player_id: player.id,
+			pile: pile,
+			card_id: pile.last
+		}
 	end
 
-	def get_points pile, pile_score, is_last_card
+	def get_pile_points pile_ids, is_last_card
+		pile_cards = get_cards pile_ids
+		pile_score = pile_cards.map { |card| card.value } .sum
 		points = 0
 		points = 1 if pile_score == 31
 		points = 2 if pile_score == 15
 
 		points += 1 if is_last_card
-		points += score_consecutive pile
+		points += score_consecutive pile_cards
 		
 		return points
 	end
@@ -86,14 +100,5 @@ class Score
 		fifteen_count = sum_of_all.calculated_values.count 15.0
 		thirty_one_count = sum_of_all.calculated_values.count 31.0
 		fifteen_count * 2 + thirty_one_count * 2
-	end
-
-	def score_hand cards
-		# return a hash with total possible score and set of all possible scores
-		# 15, 31, 2k, 3k, 4k, flush, straight (small?)
-		n_of_kind_score = score_n_of_a_kind cards
-		sum_score = score_sums cards
-		total_score = n_of_kind_score + sum_score
-		total_score
 	end
 end
