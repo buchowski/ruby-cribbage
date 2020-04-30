@@ -1,10 +1,11 @@
 class Player
-	attr_accessor :id, :hand
+	attr_accessor :id, :hand, :total_score
 
 	def initialize game, id
 		@id = id
 		@game = game
 		@hand = []
+		@total_score = 0
 	end
 
 	def discard cards

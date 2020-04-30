@@ -7,6 +7,7 @@ class WrongStateError < RuntimeError; end
 
 class Game
 	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm, :points_to_win, :round
+	attr_reader :auto_score, :winner
 
 	def initialize args=nil
 		@players = 2.times.map { |id| Player.new self, id.to_s }
@@ -15,6 +16,8 @@ class Game
 		@fsm = FSM.new 
 		@deck = self.class.get_cards_hash CardDeck::Deck.new.cards
 		@round = 0
+		@auto_score = true
+		@winner = nil
 
 		reset_cards
 	end
@@ -116,10 +119,12 @@ class Game
 		@pile << card_id
 		is_last_card = (not can_either_player_play?)
 		@score_client.score_play(@pile, is_last_card, player)
+		@score_client.submit_play_score player
+		return if we_have_a_winner?
 
 		@pile = [] if is_last_card
-		@fsm.score if player_hands_empty?
 		@whose_turn = not_whose_turn if can_not_whose_turn_play?
+		@fsm.score if player_hands_empty?
 	end
 
 	def flip_top_card
@@ -142,23 +147,33 @@ class Game
 		@fsm.flip_top_card if all_cards_discarded?
 	end
 
-	def score_hand player
+	def submit_hand_scores player
 		raise NotYourTurnError if player == @dealer && (not @fsm.scoring_dealer_hand?)
 		raise NotYourTurnError if player == opponent && (not @fsm.scoring_opponent_hand?)
 
+		@score_client.submit_scores player, :hand
+		return if we_have_a_winner?
 		@fsm.score
 	end
 
-	def score_crib
+	def submit_crib_scores
 		raise WrongStateError if not @fsm.scoring_dealer_crib?
 
+		@score_client.submit_scores @dealer, :crib
+		return if we_have_a_winner?
 		reset_cards
 		@dealer = opponent
 		@fsm.deal
 	end
 
-	def game_over
 
+	def we_have_a_winner?
+		winner = @players.select { |player| player.total_score >= @points_to_win }
+		return false if winner.empty?
+		raise "You can only have one winner" if winner.size > 1
+		
+		@winner = winner.first
+		return true
 	end
 
 end

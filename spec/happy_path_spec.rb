@@ -54,16 +54,16 @@ describe "happy_path_integration" do
 		end
 
 		it "should score opponent's hand" do
-			expect { @game.score_hand @dealer }.to raise_error(NotYourTurnError)
-			@game.score_hand @opponent
+			expect { @game.submit_hand_scores @dealer }.to raise_error(NotYourTurnError)
+			@game.submit_hand_scores @opponent
 		end
 
 		it "should score dealer's hand" do
-			@game.score_hand @dealer
+			@game.submit_hand_scores @dealer
 		end
 
 		it "should score dealer's crib" do
-			@game.score_crib
+			@game.submit_crib_scores
 		end
 	end
 
@@ -112,9 +112,9 @@ describe "happy_path_integration" do
 		end
 
 		it "should scores hands and crib" do
-			@game.score_hand @opponent
-			@game.score_hand @dealer
-			@game.score_crib
+			@game.submit_hand_scores @opponent
+			@game.submit_hand_scores @dealer
+			@game.submit_crib_scores
 		end
 	end
 
@@ -163,9 +163,9 @@ describe "happy_path_integration" do
 		end
 
 		it "should scores hands and crib" do
-			@game.score_hand @opponent
-			@game.score_hand @dealer
-			@game.score_crib
+			@game.submit_hand_scores @opponent
+			@game.submit_hand_scores @dealer
+			@game.submit_crib_scores
 		end
 	end
 
@@ -211,9 +211,9 @@ describe "happy_path_integration" do
 		end
 
 		it "should scores hands and crib" do
-			@game.score_hand @opponent
-			@game.score_hand @dealer
-			@game.score_crib
+			@game.submit_hand_scores @opponent
+			@game.submit_hand_scores @dealer
+			@game.submit_crib_scores
 		end
 	end
 end

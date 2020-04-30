@@ -11,7 +11,7 @@ class Score
 	end
 
 	def empty_scorecard
-		{crib: {}, hand: {}}
+		{crib: {total_score: 0}, hand: {total_score: 0}}
 	end
 
 	def get_scorecard player
@@ -22,13 +22,13 @@ class Score
 
 	def score_crib
 		cards = get_cards(@game.crib + [@game.cut_card])
-		get_scorecard(@game.dealer)[:crib] = score_hand cards
+		get_scorecard(@game.dealer)[:crib][:total_score] = score_hand cards
 	end
 
 	def score_hands
 		@game.players.each do |player|
 			cards = get_cards(player.hand.keys + [@game.cut_card])
-			get_scorecard(player)[:hand] = score_hand cards
+			get_scorecard(player)[:hand][:total_score] = score_hand cards
 		end
 	end
 
@@ -50,6 +50,25 @@ class Score
 			pile: pile,
 			card_id: pile.last
 		}
+	end
+
+	def submit_play_score player, submitted_scores=nil
+		raise "You must submit scores if auto_score=false" if submitted_scores.nil? && (not @game.auto_score)
+
+		if @game.auto_score
+			player.total_score += @scorecards[@game.round][:play].last[:points]
+		end
+	end
+
+	def submit_scores player, card_group, submitted_scores=nil
+		raise "You must submit scores if auto_score=false" if submitted_scores.nil? && (not @game.auto_score)
+		raise "card_group must be :hand or :crib" if not [:hand, :crib].include? card_group
+
+		possible_scores = get_scorecard(player)[card_group]
+
+		if @game.auto_score
+			player.total_score += possible_scores[:total_score]
+		end
 	end
 
 	def get_pile_points pile_ids, is_last_card
