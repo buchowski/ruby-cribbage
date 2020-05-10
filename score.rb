@@ -1,6 +1,8 @@
-require "sum_all_number_combinations"
+require './score_utils'
 
 class Score
+	include ScoreUtils
+
 	def initialize game
 		@game = game
 		@scorecards = {}
@@ -41,14 +43,15 @@ class Score
 		total_score
 	end
 
-	def score_play pile, is_last_card, player 
+	def score_play pile_ids, is_last_card, player 
 		@scorecards[@game.round] = @scorecards[@game.round] || {play: []}
-		points = get_pile_points(pile, is_last_card)
+		pile_cards = get_cards pile_ids
+		points = get_pile_points(pile_cards, is_last_card) # pass pile cards not ids
 		@scorecards[@game.round][:play] << {
 			points: points,
 			player_id: player.id,
-			pile: pile,
-			card_id: pile.last
+			pile: pile_ids,
+			card_id: pile_ids.last
 		}
 	end
 
@@ -69,55 +72,5 @@ class Score
 		if @game.auto_score
 			player.total_score += possible_scores[:total_score]
 		end
-	end
-
-	def get_pile_points pile_ids, is_last_card
-		pile_cards = get_cards pile_ids
-		pile_score = pile_cards.map { |card| card.value } .sum
-		points = 0
-		points = 1 if pile_score == 31
-		points = 2 if pile_score == 15
-
-		points += 1 if is_last_card
-		points += score_consecutive pile_cards
-		
-		return points
-	end
-
-	def score_consecutive cards
-		count = 0
-
-		cards.each_index do |i|
-			break if i == cards.size - 1
-			count = (cards[i].num == cards[i + 1].num) ? count + 1 : 0
-		end
-		# returns 0, 2, 6 or 12
-		return count ** 2 + count
-	end
-
-	def score_n_of_a_kind cards
-		# 2, 3, 4 of a kind
-		counts = cards.reduce({}) do |counts, card|
-			if counts[card.num].nil?
-				counts[card.num] = 1
-			else
-				counts[card.num] += 1
-			end
-			counts
-		end
-
-		counts.values.reduce(0) do |points, count|
-			points += count * (count - 1)
-		end
-	end
-
-	def score_sums cards
-		# 15 & 31
-		card_values = cards.map { |card| card.value }
-		sum_of_all = SumAllCombinations.new card_values
-		sum_of_all.sum
-		fifteen_count = sum_of_all.calculated_values.count 15.0
-		thirty_one_count = sum_of_all.calculated_values.count 31.0
-		fifteen_count * 2 + thirty_one_count * 2
 	end
 end
