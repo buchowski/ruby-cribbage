@@ -2,6 +2,7 @@ require './card'
 require './score'
 
 class NotYourTurnError < RuntimeError; end
+class NotYourCardError < RuntimeError; end
 class CardTooLargeError < RuntimeError; end
 class WrongStateError < RuntimeError; end
 
@@ -81,7 +82,7 @@ class Game
 	def is_valid_play? player, card_id
 		raise WrongStateError if not @fsm.playing?
 		raise NotYourTurnError if not player == @whose_turn
-		raise "player may only play card from own hand" if not player.hand[card_id]
+		raise NotYourCardError if not player.hand[card_id]
 		raise CardTooLargeError if not can_play_card? card_id
 		return true
 	end
@@ -139,7 +140,7 @@ class Game
 
 	def discard player, card_id
 		raise WrongStateError if not @fsm.discarding?
-		raise "player may only play card from own hand" if not player.hand[card_id]
+		raise NotYourCardError if not player.hand[card_id]
 
 		player.hand.delete(card_id)
 		@crib << card_id
@@ -166,13 +167,13 @@ class Game
 		@fsm.deal
 	end
 
-
 	def we_have_a_winner?
 		winner = @players.select { |player| player.total_score >= @points_to_win }
 		return false if winner.empty?
 		raise "You can only have one winner" if winner.size > 1
 		
 		@winner = winner.first
+		@fsm.declare_winner
 		return true
 	end
 

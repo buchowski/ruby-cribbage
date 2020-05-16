@@ -8,6 +8,7 @@ class FSM
 		state :flipping_top_card
 		state :discarding, :dealing, :playing
 		state :scoring_opponent_hand, :scoring_dealer_hand, :scoring_dealer_crib
+		state :game_over
 
 		event :deal do
 			transitions from: :cutting_for_deal, to: :dealing
@@ -30,6 +31,10 @@ class FSM
 			transitions from: :playing, to: :scoring_opponent_hand
 			transitions from: :scoring_opponent_hand, to: :scoring_dealer_hand
 			transitions from: :scoring_dealer_hand, to: :scoring_dealer_crib
+		end
+
+		event :declare_winner do
+			transitions to: :game_over
 		end
 	end
 end
