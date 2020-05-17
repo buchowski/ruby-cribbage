@@ -10,14 +10,15 @@ class Game
 	attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm, :points_to_win, :round
 	attr_reader :auto_score, :winner
 
-	def initialize args=nil
+	def initialize args={}
+		@points_to_win = args[:points_to_win] || 121
+		@auto_score = args[:is_auto_score] || true
+		@game_over_cb = args[:game_over_cb] || proc {}
 		@players = 2.times.map { |id| Player.new self, id.to_s }
-		@points_to_win = 121
 		@score_client = Score.new self
 		@fsm = FSM.new 
 		@deck = self.class.get_cards_hash CardDeck::Deck.new.cards
 		@round = 0
-		@auto_score = true
 		@winner = nil
 
 		reset_cards
@@ -128,10 +129,10 @@ class Game
 		@fsm.score if player_hands_empty?
 	end
 
-	def flip_top_card
+	def flip_top_card top_card=nil
 		raise WrongStateError if not @fsm.flipping_top_card?
 
-		@cut_card = undealt_card_ids.sample 
+		@cut_card = top_card || undealt_card_ids.sample 
 		@whose_turn = opponent
 		@score_client.score_crib
 		@score_client.score_hands
@@ -174,6 +175,7 @@ class Game
 		
 		@winner = winner.first
 		@fsm.declare_winner
+		@game_over_cb.call()
 		return true
 	end
 

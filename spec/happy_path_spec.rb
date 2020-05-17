@@ -1,8 +1,14 @@
 require './game'
 
+def log_scores game
+	p 'dealer', game.dealer.total_score
+	p 'opponent', game.opponent.total_score
+end
+
 describe "happy_path_integration" do
 	before(:all) do
-		@game = Game.new
+		@game_over_cb = proc {}
+		@game = Game.new points_to_win: 35, game_over_cb: @game_over_cb
 		@game.cut_for_deal
 	end
 
@@ -33,8 +39,7 @@ describe "happy_path_integration" do
 		end
 
 		it "should flip_top_card" do
-			@game.flip_top_card
-			@game.cut_card = @flip_card
+			@game.flip_top_card @flip_card
 		end
 
 		it "should play round 1" do
@@ -64,6 +69,7 @@ describe "happy_path_integration" do
 
 		it "should score dealer's crib" do
 			@game.submit_crib_scores
+			log_scores @game
 		end
 	end
 
@@ -90,8 +96,7 @@ describe "happy_path_integration" do
 		end
 
 		it "should flip_top_card" do
-			@game.flip_top_card
-			@game.cut_card = @flip_card
+			@game.flip_top_card @flip_card
 		end
 
 		it "should play round 1" do
@@ -115,6 +120,7 @@ describe "happy_path_integration" do
 			@game.submit_hand_scores @opponent
 			@game.submit_hand_scores @dealer
 			@game.submit_crib_scores
+			log_scores @game
 		end
 	end
 
@@ -141,8 +147,7 @@ describe "happy_path_integration" do
 		end
 
 		it "should flip_top_card" do
-			@game.flip_top_card
-			@game.cut_card = @flip_card
+			@game.flip_top_card @flip_card
 		end
 
 		it "should play round 1" do
@@ -166,6 +171,7 @@ describe "happy_path_integration" do
 			@game.submit_hand_scores @opponent
 			@game.submit_hand_scores @dealer
 			@game.submit_crib_scores
+			log_scores @game
 		end
 	end
 
@@ -192,8 +198,7 @@ describe "happy_path_integration" do
 		end
 
 		it "should flip_top_card" do
-			@game.flip_top_card
-			@game.cut_card = @flip_card
+			@game.flip_top_card @flip_card
 		end
 
 		it "should play round 1" do
@@ -211,9 +216,11 @@ describe "happy_path_integration" do
 		end
 
 		it "should scores hands and crib" do
+			expect(@game.fsm.game_over?).to eql false
 			@game.submit_hand_scores @opponent
-			@game.submit_hand_scores @dealer
-			@game.submit_crib_scores
+			expect { @game.submit_hand_scores @dealer }.to raise_error(NotYourTurnError)
+			expect(@game.fsm.game_over?).to eql true
+			log_scores @game
 		end
 	end
 end
