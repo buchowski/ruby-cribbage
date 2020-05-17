@@ -1,10 +1,5 @@
 require './game'
 
-def log_scores game
-	p 'dealer', game.dealer.total_score
-	p 'opponent', game.opponent.total_score
-end
-
 describe "happy_path_integration" do
 	before(:all) do
 		@game_over_cb = proc {}
@@ -69,7 +64,6 @@ describe "happy_path_integration" do
 
 		it "should score dealer's crib" do
 			@game.submit_crib_scores
-			log_scores @game
 		end
 	end
 
@@ -120,7 +114,6 @@ describe "happy_path_integration" do
 			@game.submit_hand_scores @opponent
 			@game.submit_hand_scores @dealer
 			@game.submit_crib_scores
-			log_scores @game
 		end
 	end
 
@@ -171,7 +164,6 @@ describe "happy_path_integration" do
 			@game.submit_hand_scores @opponent
 			@game.submit_hand_scores @dealer
 			@game.submit_crib_scores
-			log_scores @game
 		end
 	end
 
@@ -220,7 +212,6 @@ describe "happy_path_integration" do
 			@game.submit_hand_scores @opponent
 			expect { @game.submit_hand_scores @dealer }.to raise_error(NotYourTurnError)
 			expect(@game.fsm.game_over?).to eql true
-			log_scores @game
 		end
 	end
 end
