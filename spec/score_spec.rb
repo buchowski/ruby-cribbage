@@ -52,4 +52,22 @@ RSpec.describe Score, "score_client" do
 			expect(@score_client.score_consecutive cards).to eql 12
 		end
 	end
+	context "get_pile_points - foreign card (extra 7h) breaks run" do
+		it "should return 0 for 8" do
+			cards = @score_client.get_cards ['8h']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+		it "should return 2 for 8, 7" do
+			cards = @score_client.get_cards ['8h', '7c']
+			expect(@score_client.get_pile_points cards, false).to eql 2
+		end
+		it "should return 2 for 8, 7, 7" do
+			cards = @score_client.get_cards ['8h', '7c', '7h']
+			expect(@score_client.get_pile_points cards, false).to eql 2
+		end
+		it "should return 0 for 8, 7, 7, 6" do
+			cards = @score_client.get_cards ['8h', '7c', '7h', '6s']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+	end
 end
