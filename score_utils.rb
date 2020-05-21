@@ -29,14 +29,13 @@ module ScoreUtils
 		end
 	end
 
-	def score_sums cards
-		# 15 & 31
+	def score_fifteens cards
 		card_values = cards.map { |card| card.value }
 		sum_of_all = SumAllCombinations.new card_values
 		sum_of_all.sum
 		fifteen_count = sum_of_all.calculated_values.count 15.0
-		thirty_one_count = sum_of_all.calculated_values.count 31.0
-		fifteen_count * 2 + thirty_one_count * 2
+
+		return fifteen_count * 2
     end
     
 	def get_pile_points pile_cards, is_last_card

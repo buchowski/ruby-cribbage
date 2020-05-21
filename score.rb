@@ -36,9 +36,9 @@ class Score
 
 	def score_hand cards
 		# return a hash with total possible score and set of all possible scores
-		# 15, 31, 2k, 3k, 4k, flush, straight (small?)
+		# 15, 2k, 3k, 4k, flush, straight (small?)
 		n_of_kind_score = score_n_of_a_kind cards
-		sum_score = score_sums cards
+		sum_score = score_fifteens cards
 		total_score = n_of_kind_score + sum_score
 		total_score
 	end
