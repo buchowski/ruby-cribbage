@@ -3,7 +3,10 @@ require './game'
 describe "happy_path_integration" do
 	before(:all) do
 		@game_over_cb = proc {}
-		@game = Game.new points_to_win: 35, game_over_cb: @game_over_cb
+		@game = Game.new ({
+			points_to_win: 35,
+			game_over_cb: @game_over_cb
+		})
 		@game.cut_for_deal
 	end
 
