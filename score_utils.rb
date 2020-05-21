@@ -40,6 +40,9 @@ module ScoreUtils
     
 	def get_pile_points pile_cards, is_last_card
 		pile_score = pile_cards.map { |card| card.value } .sum
+
+		throw "31 should always be is_last_card" if pile_score == 31 && (not is_last_card)
+
 		points = 0
 		points = 1 if pile_score == 31
 		points = 2 if pile_score == 15
