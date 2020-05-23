@@ -122,4 +122,30 @@ RSpec.describe Score, "score_client" do
 			expect(@score_client.get_pile_points cards, false).to eql 0
 		end
 	end
+	context "score_hand" do
+		it "should not score 31 or ace as adjacent to king" do
+			cards = @score_client.get_cards ['10h', 'qd', 'kh', 'ad']
+			expect(@score_client.score_hand cards).to eql 0
+		end
+		it "should score 15's, 3 card run and pair" do
+			cards = @score_client.get_cards ['9h', 'ad', '2h', '3d', '9c']
+			expect(@score_client.score_hand cards).to eql 9
+		end
+		it "should score 15 and run no matter the card order" do
+			cards = @score_client.get_cards ['ah', '8d', '2h', '3d', '10c']
+			expect(@score_client.score_hand cards).to eql 5
+		end
+		it "should score 15 and 3 of kind" do
+			cards = @score_client.get_cards ['3h', '3d', '3c', '6d', '7c']
+			expect(@score_client.score_hand cards).to eql 8
+		end
+		it "should score 15's and pairs" do
+			cards = @score_client.get_cards ['7h', '8d', '8h', '7d', '4c']
+			expect(@score_client.score_hand cards).to eql 12
+		end
+		it "should score 15's and 5 card run" do
+			cards = @score_client.get_cards ['5h', '6d', '7h', '8d', '9c']
+			expect(@score_client.score_hand cards).to eql 9
+		end
+	end
 end

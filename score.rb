@@ -39,7 +39,8 @@ class Score
 		# 15, 2k, 3k, 4k, flush, straight (small?)
 		n_of_kind_score = score_n_of_a_kind cards
 		sum_score = score_fifteens cards
-		total_score = n_of_kind_score + sum_score
+		run_score = score_runs cards
+		total_score = n_of_kind_score + sum_score + run_score
 		total_score
 	end
 
