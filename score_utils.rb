@@ -2,6 +2,25 @@ require "sum_all_number_combinations"
 
 module ScoreUtils
 
+	def is_run cards
+		cards.each_index do |i| 
+			return true if i == cards.size - 1
+			return false if (cards[i + 1].sort_value - cards[i].sort_value) != 1
+		end
+	end
+
+	def score_runs cards
+		return 0 if cards.size < 3
+
+		(3..cards.size).to_a.reverse.each do |n|
+			# get the last n cards played and sort_by sort_value
+			subset = cards.reverse[0...n].sort_by { |card| card.sort_value }
+			return n if is_run subset
+		end
+
+		return 0
+	end
+
 	def score_consecutive cards
 		count = 0
 
@@ -49,6 +68,7 @@ module ScoreUtils
 
 		points += 1 if is_last_card
 		points += score_consecutive pile_cards
+		points += score_runs pile_cards
 		
 		return points
 	end

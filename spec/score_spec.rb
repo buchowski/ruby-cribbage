@@ -70,4 +70,56 @@ RSpec.describe Score, "score_client" do
 			expect(@score_client.get_pile_points cards, false).to eql 0
 		end
 	end
+	context "get_pile_points - nonsequential run" do
+		it "should return 0" do
+			cards = @score_client.get_cards ['9h']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+		it "should return 2 for 15" do
+			cards = @score_client.get_cards ['9h', '6d']
+			expect(@score_client.get_pile_points cards, false).to eql 2
+		end
+		it "should return 0" do
+			cards = @score_client.get_cards ['9h', '6d', '8d']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+		it "should return 4 for run" do
+			cards = @score_client.get_cards ['9h', '6d', '8d', '7c']
+			expect(@score_client.get_pile_points cards, false).to eql 4
+		end
+		it "should return 5 for run" do
+			cards = @score_client.get_cards ['2h', '4d', '3d', '6c', '5h']
+			expect(@score_client.get_pile_points cards, false).to eql 5
+		end
+		it "should return 3 for run" do
+			cards = @score_client.get_cards ['jh', '9d', '10d']
+			expect(@score_client.get_pile_points cards, false).to eql 3
+		end
+	end
+	context "get_pile_points - sequential run" do
+		it "should return 0" do
+			cards = @score_client.get_cards ['9h']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+		it "should return 0" do
+			cards = @score_client.get_cards ['9h', 'ad']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+		it "should return 0" do
+			cards = @score_client.get_cards ['9h', 'ad', '2h']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+		it "should return 3 for run" do
+			cards = @score_client.get_cards ['10h', 'ad', '2h', '3d']
+			expect(@score_client.get_pile_points cards, false).to eql 3
+		end
+		it "should return 4 for run" do
+			cards = @score_client.get_cards ['9h', 'ad', '2h', '3d', '4c']
+			expect(@score_client.get_pile_points cards, false).to eql 4
+		end
+		it "should return 0" do
+			cards = @score_client.get_cards ['9h', 'ad', '2h', '3d', '4c', '6d']
+			expect(@score_client.get_pile_points cards, false).to eql 0
+		end
+	end
 end
