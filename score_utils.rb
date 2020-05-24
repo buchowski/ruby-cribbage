@@ -9,7 +9,24 @@ module ScoreUtils
 		end
 	end
 
-	def score_runs cards
+	def score_hand_runs cards
+		return 0 if cards.size < 3
+
+		sorted = cards.sort_by { |card| card.sort_value }
+		sorted.each_index do |i|
+			# check for runs of size 3 up to max_length starting w/card at index i
+			max_length = sorted.size - i
+			(3..max_length).to_a.reverse.each do |n|
+				subset = sorted[i...n]
+				break if subset.size < 3
+				return n if is_run subset
+			end
+		end
+
+		return 0
+	end
+
+	def score_pile_runs cards
 		return 0 if cards.size < 3
 
 		(3..cards.size).to_a.reverse.each do |n|
@@ -68,7 +85,7 @@ module ScoreUtils
 
 		points += 1 if is_last_card
 		points += score_consecutive pile_cards
-		points += score_runs pile_cards
+		points += score_pile_runs pile_cards
 		
 		return points
 	end
