@@ -3,25 +3,15 @@ require "sum_all_number_combinations"
 
 module ScoreUtils
 
-	def is_hand_run sort_vals
+	def is_run sort_vals, is_allow_double_runs=false
 		sort_vals.each_index do |i| 
 			return true if i == sort_vals.size - 1
 			card_val =  sort_vals[i]
 			next_card_val = sort_vals[i + 1]
 			is_same_card = next_card_val == card_val
 			is_adj_card = next_card_val - card_val == 1
-			is_run_possible = is_adj_card || is_same_card
+			is_run_possible = is_adj_card || (is_same_card && is_allow_double_runs)
 			return false if not is_run_possible
-		end
-	end
-
-	def is_pile_run cards
-		cards.each_index do |i| 
-			return true if i == cards.size - 1
-			card_val =  cards[i].sort_value
-			next_card_val = cards[i + 1].sort_value
-			is_adj_card = next_card_val - card_val == 1
-			return false if not is_adj_card
 		end
 	end
 
@@ -36,7 +26,7 @@ module ScoreUtils
 				uniq_count = subset.uniq.size
 				break if uniq_count < 3
 
-				if is_hand_run(subset)
+				if is_run(subset, true)
 					points = uniq_count
 					subset.uniq.each do |sort_val|
 						count = subset.count sort_val
@@ -55,8 +45,9 @@ module ScoreUtils
 
 		(3..cards.size).to_a.reverse.each do |n|
 			# get the last n cards played and sort_by sort_value
-			subset = cards.reverse[0...n].sort_by { |card| card.sort_value }
-			return n if is_pile_run subset
+			sort_vals = cards.map { |card| card.sort_value }
+			subset = sort_vals.reverse[0...n].sort
+			return n if is_run subset
 		end
 
 		return 0
