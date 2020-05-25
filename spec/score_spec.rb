@@ -148,4 +148,18 @@ RSpec.describe Score, "score_client" do
 			expect(@score_client.score_hand cards).to eql 9
 		end
 	end
+	context "score_hand_runs" do
+		it "should score 3 card double run" do
+			cards = @score_client.get_cards ['2h', '3d', '4h', '4d', '7c']
+			expect(@score_client.score_hand_runs cards).to eql 6
+		end
+		it "should score 4 card double run" do
+			cards = @score_client.get_cards ['8h', '6d', '7h', '7d', '5c']
+			expect(@score_client.score_hand_runs cards).to eql 8
+		end
+		it "should score double-double run" do
+			cards = @score_client.get_cards ['2h', '6h', '6d', '7h', '7d', '5c', '3c']
+			expect(@score_client.score_hand_runs cards).to eql 12
+		end
+	end
 end

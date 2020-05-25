@@ -1,25 +1,49 @@
 require "sum_all_number_combinations"
 
+
 module ScoreUtils
 
-	def is_run cards
+	def is_hand_run sort_vals
+		sort_vals.each_index do |i| 
+			return true if i == sort_vals.size - 1
+			card_val =  sort_vals[i]
+			next_card_val = sort_vals[i + 1]
+			is_same_card = next_card_val == card_val
+			is_adj_card = next_card_val - card_val == 1
+			is_run_possible = is_adj_card || is_same_card
+			return false if not is_run_possible
+		end
+	end
+
+	def is_pile_run cards
 		cards.each_index do |i| 
 			return true if i == cards.size - 1
-			return false if (cards[i + 1].sort_value - cards[i].sort_value) != 1
+			card_val =  cards[i].sort_value
+			next_card_val = cards[i + 1].sort_value
+			is_adj_card = next_card_val - card_val == 1
+			return false if not is_adj_card
 		end
 	end
 
 	def score_hand_runs cards
 		return 0 if cards.size < 3
 
-		sorted = cards.sort_by { |card| card.sort_value }
-		sorted.each_index do |i|
-			# check for runs of size 3 up to max_length starting w/card at index i
-			max_length = sorted.size - i
-			(3..max_length).to_a.reverse.each do |n|
-				subset = sorted[i...n]
-				break if subset.size < 3
-				return n if is_run subset
+		by_sort_value = proc { |card| card.sort_value }
+		sort_vals = cards.map(&by_sort_value).sort
+		sort_vals.each_index do |i|
+			(3..(sort_vals.size)).to_a.reverse.each do |n|
+				subset = sort_vals[i...n]
+				uniq_count = subset.uniq.size
+				break if uniq_count < 3
+
+				if is_hand_run(subset)
+					points = uniq_count
+					subset.uniq.each do |sort_val|
+						count = subset.count sort_val
+						points *= count if count > 1
+					end
+					return points
+				end
 			end
 		end
 
@@ -32,7 +56,7 @@ module ScoreUtils
 		(3..cards.size).to_a.reverse.each do |n|
 			# get the last n cards played and sort_by sort_value
 			subset = cards.reverse[0...n].sort_by { |card| card.sort_value }
-			return n if is_run subset
+			return n if is_pile_run subset
 		end
 
 		return 0
