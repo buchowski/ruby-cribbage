@@ -24,7 +24,7 @@ class Score
 
 	def score_crib
 		cards = get_cards(@game.crib + [@game.cut_card])
-		get_scorecard(@game.dealer)[:crib][:total_score] = score_hand cards
+		get_scorecard(@game.dealer)[:crib][:total_score] = score_hand(cards, true)
 	end
 
 	def score_hands
@@ -34,13 +34,21 @@ class Score
 		end
 	end
 
-	def score_hand cards
+	def score_flushes cards, is_crib
+		points = score_flush(cards + [@game.cut_card])
+		return points if points > 0 && (not is_crib)
+		return score_flush(cards)
+	end
+
+	def score_hand cards, is_crib=false
 		# return a hash with total possible score and set of all possible scores
 		# 15, 2k, 3k, 4k, flush, straight (small?)
 		n_of_kind_score = score_n_of_a_kind cards
 		sum_score = score_fifteens cards
 		run_score = score_hand_runs cards
-		total_score = n_of_kind_score + sum_score + run_score
+		flush_score = score_flushes(cards, is_crib)
+		nobs_score = score_nobs(cards, @game.cut_card)
+		total_score = n_of_kind_score + sum_score + run_score + flush_score + nobs_score
 		total_score
 	end
 

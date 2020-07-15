@@ -88,6 +88,14 @@ module ScoreUtils
 
 		return fifteen_count * 2
     end
+
+    def score_flush cards
+    	return 0
+    end
+
+    def score_nobs top_card, cards
+    	return 0
+    end
     
 	def get_pile_points pile_cards, is_last_card
 		pile_score = pile_cards.map { |card| card.value } .sum
@@ -104,4 +112,5 @@ module ScoreUtils
 		
 		return points
 	end
+
 end
