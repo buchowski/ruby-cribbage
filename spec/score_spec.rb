@@ -167,9 +167,9 @@ RSpec.describe Score, "score_client" do
 			cards = @score_client.get_cards ['8h', '6d', '7h', '7d', '5c']
 			expect(@score_client.score_flush cards).to eql 0
 		end
-		it "should score 0 if 3 cards or less" do
+		it "should raise error 0 if 3 cards or less" do
 			cards = @score_client.get_cards ['8h', '6h', '7h']
-			expect(@score_client.score_flush cards).to eql 0
+			expect { @score_client.score_flush cards }.to raise_error ArgumentError
 		end
 		it "should score 4 if 4 card flush" do
 			cards = @score_client.get_cards ['8h', '6h', '7h', 'kh']
@@ -183,18 +183,15 @@ RSpec.describe Score, "score_client" do
 	context "score_nobs" do
 		it "should return 0 if no jack in hand" do
 			cards = @score_client.get_cards ['8h', '6d', '7h', '7d', '5c']
-			top_card = cards.pop 
-			expect(@score_client.score_nobs(top_card, cards)).to eql 0
+			expect(@score_client.score_nobs(cards)).to eql 0
 		end
 		it "should return 0 if jack doesn't match top card suit" do
 			cards = @score_client.get_cards ['jh', '6d', '7h', '7d', '5c']
-			top_card = cards.pop 
-			expect(@score_client.score_nobs(top_card, cards)).to eql 0
+			expect(@score_client.score_nobs(cards)).to eql 0
 		end
 		it "should return 1 if jack matches top card suit" do
 			cards = @score_client.get_cards ['jh', '6d', '7h', '7d', '5h']
-			top_card = cards.pop 
-			expect(@score_client.score_nobs(top_card, cards)).to eql 1
+			expect(@score_client.score_nobs(cards)).to eql 1
 		end
 	end
 end

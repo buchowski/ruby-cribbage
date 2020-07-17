@@ -28,5 +28,3 @@ game = Game.new ({
 ```
 ### Tests
 `$ rspec`
-### Known issues
-5/17/20 - Scoring isn't fully implemented yet.

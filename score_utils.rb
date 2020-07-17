@@ -89,11 +89,24 @@ module ScoreUtils
 		return fifteen_count * 2
     end
 
-    def score_flush cards
-    	return 0
+    def are_same_suit cards
+    	cards.map { |card| card.suit } .uniq.size == 1
     end
 
-    def score_nobs top_card, cards
+	def score_flush cards, is_crib=false
+		raise ArgumentError, "only pass 4 or 5 cards to score_flush" if (not cards.size.between?(4, 5))
+		is_five_card_flush = cards.size == 5 && are_same_suit(cards)
+		is_four_card_flush = cards.size == 4 && are_same_suit(cards[0...4])
+
+		return 5 if is_five_card_flush
+		return 4 if is_four_card_flush && (not is_crib)
+		return 0
+	end
+
+    def score_nobs cards
+    	top_card = cards.pop
+    	jack = cards.find { |card| card.num == "Jack" }
+    	return 1 if jack && jack.suit == top_card.suit
     	return 0
     end
     
