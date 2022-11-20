@@ -1,7 +1,7 @@
-require './card'
-require './score'
-require './player'
-require './fsm'
+require 'card'
+require 'score'
+require 'player'
+require 'fsm'
 
 class NotYourTurnError < RuntimeError; end
 class NotYourCardError < RuntimeError; end

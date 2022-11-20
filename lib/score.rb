@@ -1,4 +1,4 @@
-require './score_utils'
+require 'score_utils'
 
 class Score
 	include ScoreUtils

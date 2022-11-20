@@ -1,4 +1,4 @@
-require './fsm'
+require 'fsm'
 require './spec/test_utils'
 
 RSpec.describe FSM, "fsm" do

@@ -1,4 +1,4 @@
-require './game'
+require 'game'
 
 describe "happy_path_integration" do
 	before(:all) do

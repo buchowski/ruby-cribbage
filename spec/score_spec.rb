@@ -1,4 +1,4 @@
-require './score'
+require 'score'
 require './spec/test_utils'
 
 RSpec.describe Score, "score_client" do

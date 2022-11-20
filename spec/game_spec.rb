@@ -1,5 +1,5 @@
-require './game'
-require './player'
+require 'game'
+require 'player'
 
 RSpec.describe Game, "#initialize" do
 	context "with two names" do

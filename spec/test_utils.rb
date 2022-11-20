@@ -1,5 +1,5 @@
-require './card'
-require './game'
+require 'card'
+require 'game'
 
 def get_card_num_hash cards
 	cards.inject({}) do |card_num_map, card|
