@@ -1,6 +1,5 @@
 require "sum_all_number_combinations"
 
-
 module ScoreUtils
 
 	def is_run sort_vals, is_allow_double_runs=false

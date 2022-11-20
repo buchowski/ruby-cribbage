@@ -1,4 +1,4 @@
-require 'score_utils'
+require 'cribbage_game/score_utils'
 
 class Score
 	include ScoreUtils

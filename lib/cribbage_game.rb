@@ -1,7 +1,7 @@
-require 'card'
-require 'score'
-require 'player'
-require 'fsm'
+require 'cribbage_game/card'
+require 'cribbage_game/score'
+require 'cribbage_game/player'
+require 'cribbage_game/fsm'
 
 class NotYourTurnError < RuntimeError; end
 class NotYourCardError < RuntimeError; end

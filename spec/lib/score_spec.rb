@@ -1,5 +1,4 @@
-require 'score'
-require './spec/test_utils'
+require 'cribbage_game/score'
 
 RSpec.describe Score, "score_client" do
 	before(:example) do

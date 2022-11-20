@@ -1,5 +1,5 @@
-require 'game'
-require 'player'
+require 'cribbage_game'
+require 'cribbage_game/player'
 
 RSpec.describe Game, "#initialize" do
 	context "with two names" do

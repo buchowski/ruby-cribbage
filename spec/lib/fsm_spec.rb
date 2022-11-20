@@ -1,5 +1,4 @@
-require 'fsm'
-require './spec/test_utils'
+require 'cribbage_game/fsm'
 
 RSpec.describe FSM, "fsm" do
 	before(:all) do
