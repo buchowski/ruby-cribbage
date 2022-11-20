@@ -1,4 +1,5 @@
 require 'cribbage_game'
+include CribbageGame
 
 module TestUtils 
 	def get_card_num_hash cards
