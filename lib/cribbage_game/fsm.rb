@@ -1,6 +1,6 @@
 require 'aasm'
 
-class FSM
+class Fsm
 	include AASM
 
 	aasm do

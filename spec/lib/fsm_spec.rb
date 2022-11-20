@@ -1,6 +1,5 @@
-require 'cribbage_game/fsm'
 
-RSpec.describe FSM, "fsm" do
+RSpec.describe Fsm, "fsm" do
 	before(:all) do
 		@game = Game.new
 		@fsm = @game.fsm

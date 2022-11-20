@@ -1,4 +1,3 @@
-require 'cribbage_game'
 
 describe "happy_path_integration" do
 	before(:all) do
