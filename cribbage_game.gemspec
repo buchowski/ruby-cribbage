@@ -29,8 +29,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "card_deck"
-  spec.add_dependency 'aasm', '~> 5.0', '>= 5.0.6'
-  spec.add_dependency 'sum_all_number_combinations', '~> 0.1.2'
+  spec.add_dependency "aasm", "~> 5.0", ">= 5.0.6"
+  spec.add_dependency "sum_all_number_combinations", "~> 0.1.2"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
