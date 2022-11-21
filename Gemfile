@@ -1,7 +1,7 @@
-# A sample Gemfile
 source "https://rubygems.org"
 
-# gem "rails"
+gemspec
+
 gem "rspec"
 gem "card_deck"
 gem 'aasm', '~> 5.0', '>= 5.0.6'
