@@ -1,5 +1,5 @@
 
-describe "happy_path_integration" do
+RSpec.describe "happy_path_integration" do
 	before(:all) do
 		@game_over_cb = proc {}
 		@game = Game.new ({

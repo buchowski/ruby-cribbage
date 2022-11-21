@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
+# Specify your gem's dependencies in ruby-cribbage-2.gemspec
 gemspec
 
-gem "rspec"
-gem "card_deck"
-gem 'aasm', '~> 5.0', '>= 5.0.6'
-gem 'sum_all_number_combinations', '~> 0.1.2'
+gem "rake", "~> 13.0"
+
+gem "rspec", "~> 3.0"
+
+gem "standard", "~> 1.3"
