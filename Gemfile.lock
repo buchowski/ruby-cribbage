@@ -1,3 +1,8 @@
+PATH
+  remote: .
+  specs:
+    cribbage_game (0.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -29,8 +34,9 @@ PLATFORMS
 DEPENDENCIES
   aasm (~> 5.0, >= 5.0.6)
   card_deck
+  cribbage_game!
   rspec
   sum_all_number_combinations (~> 0.1.2)
 
 BUNDLED WITH
-   2.1.4
+   2.3.6
