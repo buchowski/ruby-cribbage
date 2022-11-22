@@ -43,15 +43,15 @@ RSpec.describe Game, "#discard" do
       game = Game.new
       game.cut_for_deal
       game.deal
-      playerOne = game.players.first
-      playerTwo = game.players[1]
+      player_one = game.players.first
+      player_two = game.players[1]
 
-      playerOne.discard playerOne.hand.keys.sample
-      playerOne.discard playerOne.hand.keys.sample
-      playerTwo.discard playerTwo.hand.keys.sample
+      player_one.discard player_one.hand.keys.sample
+      player_one.discard player_one.hand.keys.sample
+      player_two.discard player_two.hand.keys.sample
 
-      expect(playerOne.hand.keys.count { |card_id| game.deck[card_id] }).to eql 4
-      expect(playerTwo.hand.keys.count { |card_id| game.deck[card_id] }).to eql 5
+      expect(player_one.hand.keys.count { |card_id| game.deck[card_id] }).to eql 4
+      expect(player_two.hand.keys.count { |card_id| game.deck[card_id] }).to eql 5
       expect(game.crib.size).to eql 3
     end
   end

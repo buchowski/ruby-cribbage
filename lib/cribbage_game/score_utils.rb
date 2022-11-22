@@ -74,7 +74,7 @@ module CribbageGame
       end
 
       counts.values.reduce(0) do |points, count|
-        points += count * (count - 1)
+        points + count * (count - 1)
       end
     end
 
