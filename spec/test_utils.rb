@@ -1,6 +1,3 @@
-require "cribbage_game"
-include CribbageGame
-
 module TestUtils
   def get_card_num_hash cards
     cards.each_with_object({}) do |card, card_num_map|

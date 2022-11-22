@@ -1,6 +1,6 @@
-RSpec.describe Fsm, "fsm" do
+RSpec.describe CribbageGame::Fsm, "fsm" do
   before(:all) do
-    @game = Game.new
+    @game = CribbageGame::Game.new
     @fsm = @game.fsm
   end
   it "should raise error if invalid transition" do

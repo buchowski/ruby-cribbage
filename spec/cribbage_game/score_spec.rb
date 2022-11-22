@@ -1,6 +1,6 @@
-RSpec.describe Score, "score_client" do
+RSpec.describe CribbageGame::Score, "score_client" do
   before(:example) do
-    @score_client = Score.new Game.new
+    @score_client = CribbageGame::Score.new(CribbageGame::Game.new)
     @aces = get_cards_by_num ["Ace", "Ace", "Ace"]
     @jacks = get_cards_by_num ["Jack", "Jack"]
     @fives = get_cards_by_num [5, 5, 5, 5]

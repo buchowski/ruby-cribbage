@@ -1,7 +1,7 @@
-RSpec.describe Game, "#initialize" do
+RSpec.describe CribbageGame::Game, "#initialize" do
   context "with two names" do
     it "should have a dealer and opponent" do
-      game = Game.new
+      game = CribbageGame::Game.new
       expect(game.players.size).to eql 2
       game.cut_for_deal
       dealer = game.dealer
@@ -18,10 +18,10 @@ RSpec.describe Game, "#initialize" do
   end
 end
 
-RSpec.describe Game, "#deal" do
+RSpec.describe CribbageGame::Game, "#deal" do
   context "with two players" do
     it "deals 6 cards to each player & cuts card" do
-      game = Game.new
+      game = CribbageGame::Game.new
 
       expect(game.deck.keys.size).to eql 52
       expect(game.cut_card).to eql nil
@@ -37,10 +37,10 @@ RSpec.describe Game, "#deal" do
   end
 end
 
-RSpec.describe Game, "#discard" do
+RSpec.describe CribbageGame::Game, "#discard" do
   context "with two players discarding 3 cards" do
     it "should move cards from hands to crib" do
-      game = Game.new
+      game = CribbageGame::Game.new
       game.cut_for_deal
       game.deal
       player_one = game.players.first
