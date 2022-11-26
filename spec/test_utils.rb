@@ -15,7 +15,7 @@ module TestUtils
   end
 
   def get_card_ids_by_num card_by_num_request
-    get_cards_by_num(card_by_num_request).map { |card| card.id }
+    get_cards_by_num(card_by_num_request).map(&:id)
   end
 
   def generate_n_random_card_ids n

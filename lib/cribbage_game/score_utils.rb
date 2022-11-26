@@ -17,8 +17,7 @@ module CribbageGame
     def score_hand_runs cards
       return 0 if cards.size < 3
 
-      by_sort_value = proc { |card| card.sort_value }
-      sort_vals = cards.map(&by_sort_value).sort
+      sort_vals = cards.map(&:sort_value).sort
       sort_vals.each_index do |i|
         (3..(sort_vals.size)).to_a.reverse_each do |n|
           subset = sort_vals[i...n]
@@ -44,7 +43,7 @@ module CribbageGame
 
       (3..cards.size).to_a.reverse_each do |n|
         # get the last n cards played and sort_by sort_value
-        sort_vals = cards.map { |card| card.sort_value }
+        sort_vals = cards.map(&:sort_value)
         subset = sort_vals.reverse[0...n].sort
         return n if is_run subset
       end
@@ -79,7 +78,7 @@ module CribbageGame
     end
 
     def score_fifteens cards
-      card_values = cards.map { |card| card.value }
+      card_values = cards.map(&:value)
       sum_of_all = SumAllCombinations.new card_values
       sum_of_all.sum
       fifteen_count = sum_of_all.calculated_values.count 15.0
@@ -88,7 +87,7 @@ module CribbageGame
     end
 
     def are_same_suit cards
-      cards.map { |card| card.suit }.uniq.size == 1
+      cards.map(&:suit).uniq.size == 1
     end
 
     def score_flush cards, is_crib = false
@@ -109,7 +108,7 @@ module CribbageGame
     end
 
     def get_pile_points pile_cards, is_last_card
-      pile_score = pile_cards.map { |card| card.value }.sum
+      pile_score = pile_cards.map(&:value).sum
 
       throw "31 should always be is_last_card" if pile_score == 31 && !is_last_card
 
