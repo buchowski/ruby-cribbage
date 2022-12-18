@@ -5,7 +5,7 @@ module CribbageGame
     def initialize game, id
       @id = id
       @game = game
-      @hand = []
+      @hand = {}
       @total_score = 0
     end
 

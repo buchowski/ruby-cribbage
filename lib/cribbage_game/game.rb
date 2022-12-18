@@ -98,7 +98,7 @@ module CribbageGame
       @cut_card = nil
       @crib = []
       @pile = []
-      @players.each { |player| player.hand = [] }
+      @players.each { |player| player.hand = {} }
     end
 
     def cut_for_deal
