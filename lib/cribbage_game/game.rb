@@ -13,8 +13,8 @@ module CribbageGame
   class WrongStateError < RuntimeError; end
 
   class Game
-    attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm, :points_to_win, :round
-    attr_reader :auto_score, :winner
+    attr_accessor :players, :deck, :crib, :pile, :cut_card, :dealer, :whose_turn, :fsm, :points_to_win, :round, :winner
+    attr_reader :auto_score
 
     def initialize args = {}
       @points_to_win = args[:points_to_win] || 121
