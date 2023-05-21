@@ -1,6 +1,6 @@
 module CribbageGame
   class Player
-    attr_accessor :id, :hand, :total_score
+    attr_accessor :id, :name, :hand, :total_score
 
     def initialize game, id
       @id = id
