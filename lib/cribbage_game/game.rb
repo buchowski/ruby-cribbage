@@ -19,7 +19,7 @@ module CribbageGame
     def initialize args = {}
       @points_to_win = args[:points_to_win] || 121
       @auto_score = args[:is_auto_score] || true
-      @game_over_cb = args[:game_over_cb] || proc {}
+      @game_over_cb = args[:game_over_cb] || lambda {}
       @players = 2.times.map { |id| Player.new self, id.to_s }
       @score_client = Score.new self
       @fsm = Fsm.new

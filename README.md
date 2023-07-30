@@ -39,7 +39,7 @@ game.deal # begin next round
 ```ruby
 game = Game.new ({
   points_to_win: 35, # overrides default of 121
-  game_over_cb: proc { puts "game over" } # function called on game_over
+  game_over_cb: lambda { puts "game over" } # function called on game_over
 })
 ```
 
