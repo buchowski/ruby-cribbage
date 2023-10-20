@@ -173,6 +173,11 @@ module CribbageGame
       @fsm.deal
     end
 
+    def auto_score_hands_and_crib
+      @score_client.score_hands
+      @score_client.score_crib
+    end
+
     def we_have_a_winner?
       winner = @players.select { |player| player.total_score >= @points_to_win }
       return false if winner.empty?
