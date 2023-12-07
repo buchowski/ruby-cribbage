@@ -2,11 +2,10 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in ruby-cribbage-2.gemspec
+# Specify your gem's dependencies in cribbage_game.gemspec
 gemspec
 
 gem "rake", "~> 13.0"
 
-gem "rspec", "~> 3.0"
 
 gem "standard", "~> 1.3"
