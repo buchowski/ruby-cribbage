@@ -35,6 +35,19 @@ RSpec.describe CribbageGame::Game, "#deal" do
       expect(game.deck.keys.size).to eql 52
     end
   end
+
+  context "with three players" do
+    it "deals 5 cards to each player and one card to the crib" do
+      game = CribbageGame::Game.new(number_of_players: 3)
+
+      game.cut_for_deal
+      game.deal
+
+      expect(game.players.map { |player| player.hand.keys.size }).to eql [5, 5, 5]
+      expect(game.crib.size).to eql 1
+      expect(game.deck.keys.size).to eql 52
+    end
+  end
 end
 
 RSpec.describe CribbageGame::Game, "#discard" do

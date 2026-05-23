@@ -20,7 +20,13 @@ module CribbageGame
       @points_to_win = args[:points_to_win] || 121
       @auto_score = args[:is_auto_score] || true
       @game_over_cb = args[:game_over_cb] || lambda {}
-      @players = 2.times.map { |id| Player.new self, id.to_s }
+
+      @number_of_players = args.fetch(:number_of_players, 2)
+      unless [2, 3].include?(@number_of_players)
+        raise ArgumentError, ':number_of_players must be either 2 or 3'
+      end
+
+      @players = @number_of_players.times.map { |id| Player.new self, id.to_s }
       @score_client = Score.new self
       @fsm = Fsm.new
       @deck = self.class.get_cards_hash CardDeck::Deck.new.cards
@@ -112,9 +118,16 @@ module CribbageGame
     def deal
       raise WrongStateError if !@fsm.dealing?
 
-      random_card_ids = @deck.keys.sample 12
-      @dealer.hand = self.class.get_hand_hash random_card_ids.slice!(0, 6)
-      opponent.hand = self.class.get_hand_hash random_card_ids.slice!(0, 6)
+      cards_per_player = @number_of_players == 3 ? 5 : 6
+      cards_to_draw = @players.size * cards_per_player
+      cards_to_draw += 1 if @number_of_players == 3
+
+      random_card_ids = @deck.keys.sample cards_to_draw
+      @players.each do |player|
+        player.hand = self.class.get_hand_hash random_card_ids.slice!(0, cards_per_player)
+      end
+
+      @crib << random_card_ids.shift if @number_of_players == 3
 
       @fsm.discard
     end
