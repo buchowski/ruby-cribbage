@@ -46,20 +46,33 @@ module CribbageGame
       card_ids.to_h { |id| [id, true] }
     end
 
+    def is_three_player_game?
+      @number_of_players == 3
+    end
+
+    def player_index(player)
+      @players.index(player)
+    end
+
+    def next_player(player)
+      current_index = player_index(player)
+      @players[(current_index + 1) % @players.size]
+    end
+
     def undealt_card_ids
-      @deck.keys.difference(@dealer.hand.keys, opponent.hand.keys)
+      dealt_cards = @players.flat_map { |player| player.hand.keys }
+      dealt_cards += @crib if @crib
+      dealt_cards << @cut_card if @cut_card
+
+      @deck.keys.difference(dealt_cards)
     end
 
     def opponent
-      @players.difference([@dealer]).first
+      next_player(@dealer)
     end
 
     def opponent_2
-      @players.difference([@dealer])[1]
-    end
-
-    def not_whose_turn
-      @players.difference([@whose_turn]).first
+      is_three_player_game? ? next_player(opponent) : nil
     end
 
     def can_play_card? card_id
@@ -75,16 +88,12 @@ module CribbageGame
       card_ids.map { |card_id| can_play_card?(card_id) }.any?
     end
 
-    def can_whose_turn_play?
-      has_playable_card? @whose_turn.hand
+    def can_player_play? player
+      player.nil? ? false : has_playable_card?(player.hand)
     end
 
-    def can_not_whose_turn_play?
-      has_playable_card? not_whose_turn.hand
-    end
-
-    def can_either_player_play?
-      can_whose_turn_play? || can_not_whose_turn_play?
+    def can_any_player_play?
+      @players.any? { |player| can_player_play? player }
     end
 
     def pile_score
@@ -115,23 +124,24 @@ module CribbageGame
       raise WrongStateError if !@fsm.cutting_for_deal?
 
       @dealer = @players.sample
-      @whose_turn = opponent
+      @whose_turn = next_player(@dealer)
       @fsm.deal
     end
 
     def deal
       raise WrongStateError if !@fsm.dealing?
 
-      cards_per_player = @number_of_players == 3 ? 5 : 6
+      cards_per_player = is_three_player_game? ? 5 : 6
       cards_to_draw = @players.size * cards_per_player
-      cards_to_draw += 1 if @number_of_players == 3
+      # draw an extra card for the crib in three player game
+      cards_to_draw += 1 if is_three_player_game?
 
       random_card_ids = @deck.keys.sample cards_to_draw
       @players.each do |player|
         player.hand = self.class.get_hand_hash random_card_ids.slice!(0, cards_per_player)
       end
 
-      @crib << random_card_ids.shift if @number_of_players == 3
+      @crib << random_card_ids.shift if is_three_player_game?
 
       @fsm.discard
     end
@@ -141,13 +151,22 @@ module CribbageGame
 
       player.hand[card_id] = false
       @pile << card_id
-      is_last_card = !can_either_player_play?
+      is_last_card = !can_any_player_play?
       @score_client.score_play(@pile, is_last_card, player)
       @score_client.submit_play_score player
       return if we_have_a_winner?
 
       @pile = [] if is_last_card
-      @whose_turn = not_whose_turn if can_not_whose_turn_play?
+      next_player = next_player(player)
+      next_next_player = is_three_player_game? ? next_player(next_player) : nil
+      @whose_turn =
+        if can_player_play? next_player
+          next_player
+        elsif can_player_play? next_next_player
+          next_next_player
+        else
+          player
+        end
       @fsm.score if player_hands_empty?
     end
 
@@ -155,7 +174,7 @@ module CribbageGame
       raise WrongStateError if !@fsm.flipping_top_card?
 
       @cut_card = top_card || undealt_card_ids.sample
-      @whose_turn = opponent
+      @whose_turn = next_player(@dealer)
       @score_client.score_crib
       @score_client.score_hands
       @fsm.play
@@ -188,7 +207,7 @@ module CribbageGame
       @score_client.submit_scores @dealer, :crib
       return if we_have_a_winner?
       reset_cards
-      @dealer = opponent
+      @dealer = next_player(@dealer)
       @fsm.deal
     end
 
