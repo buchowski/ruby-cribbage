@@ -28,7 +28,7 @@ module CribbageGame
 
       @players = @number_of_players.times.map { |id| Player.new self, id.to_s }
       @score_client = Score.new self
-      @fsm = Fsm.new
+      @fsm = Fsm.new(self)
       @deck = self.class.get_cards_hash CardDeck::Deck.new.cards
       @round = 0
       @winner = nil
@@ -52,6 +52,10 @@ module CribbageGame
 
     def opponent
       @players.difference([@dealer]).first
+    end
+
+    def opponent_2
+      @players.difference([@dealer])[1]
     end
 
     def not_whose_turn
@@ -170,9 +174,11 @@ module CribbageGame
     def submit_hand_scores player
       raise NotYourTurnError if player == @dealer && !@fsm.scoring_dealer_hand?
       raise NotYourTurnError if player == opponent && !@fsm.scoring_opponent_hand?
+      raise NotYourTurnError if player == opponent_2 && !@fsm.scoring_opponent_2_hand?
 
       @score_client.submit_scores player, :hand
       return if we_have_a_winner?
+
       @fsm.score
     end
 
