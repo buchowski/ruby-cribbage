@@ -4,11 +4,25 @@ module CribbageGame
   class Fsm
     include AASM
 
+    attr_accessor :game
+
+    def initialize(game = nil)
+      @game = game
+    end
+
+    def three_player?
+      game&.players&.size == 3
+    end
+
+    def two_player?
+      !three_player?
+    end
+
     aasm do
       state :cutting_for_deal, initial: true
       state :flipping_top_card
       state :discarding, :dealing, :playing
-      state :scoring_opponent_hand, :scoring_dealer_hand, :scoring_dealer_crib
+      state :scoring_opponent_hand, :scoring_opponent_2_hand, :scoring_dealer_hand, :scoring_dealer_crib
       state :game_over
 
       event :deal do
@@ -30,7 +44,9 @@ module CribbageGame
 
       event :score do
         transitions from: :playing, to: :scoring_opponent_hand
-        transitions from: :scoring_opponent_hand, to: :scoring_dealer_hand
+        transitions from: :scoring_opponent_hand, to: :scoring_dealer_hand, if: :two_player?
+        transitions from: :scoring_opponent_hand, to: :scoring_opponent_2_hand, if: :three_player?
+        transitions from: :scoring_opponent_2_hand, to: :scoring_dealer_hand
         transitions from: :scoring_dealer_hand, to: :scoring_dealer_crib
       end
 
