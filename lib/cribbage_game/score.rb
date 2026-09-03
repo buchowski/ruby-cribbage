@@ -1,4 +1,4 @@
-require "cribbage_game/score_utils"
+require_relative "score_utils"
 
 module CribbageGame
   class Score
@@ -8,6 +8,8 @@ module CribbageGame
       @game = game
       @scorecards = {}
     end
+
+    attr_reader :scorecards
 
     def get_cards card_ids
       card_ids.map { |id| @game.deck[id] }
@@ -47,9 +49,10 @@ module CribbageGame
     def score_play pile_ids, is_last_card, player
       @scorecards[@game.round] = @scorecards[@game.round] || {play: []}
       pile_cards = get_cards pile_ids
-      points = get_pile_points(pile_cards, is_last_card) # pass pile cards not ids
+      score = get_pile_points(pile_cards, is_last_card) # pass pile cards not ids
       @scorecards[@game.round][:play] << {
-        points: points,
+        points: score[:points],
+        reasons: score[:reasons],
         player_id: player.id,
         pile: pile_ids,
         card_id: pile_ids.last

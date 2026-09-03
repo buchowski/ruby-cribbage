@@ -1,7 +1,7 @@
-require "cribbage_game/card"
-require "cribbage_game/score"
-require "cribbage_game/player"
-require "cribbage_game/fsm"
+require_relative "card"
+require_relative "score"
+require_relative "player"
+require_relative "fsm"
 
 module CribbageGame
   class NotYourTurnError < RuntimeError; end
@@ -34,6 +34,10 @@ module CribbageGame
       @winner = nil
 
       reset_cards
+    end
+
+    def scorecards
+      @score_client.scorecards
     end
 
     def self.get_cards_hash cards
