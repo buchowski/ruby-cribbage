@@ -171,11 +171,7 @@ class HumanVsAiRunner
         log("#{player_label(player)} scored #{play_score[:points]} point#{"s" if play_score[:points] != 1} during play: #{format_score_reasons(play_score[:reasons])}.")
       end
       if pile_was_active && game.pile.empty?
-        if pile_total_after_play == 31
-          log("The pile reached 31 and has been reset.")
-        else
-          log("No player has a playable card, so the pile has been reset.")
-        end
+        log("")
       end
     end
   end
@@ -204,19 +200,23 @@ class HumanVsAiRunner
   end
 
   def score_round(game)
+    round_scorecard = game.scorecards.fetch(game.round)
+    pegging_scores = round_scorecard.fetch(:play, []).group_by { |play| play.fetch(:player_id) }
     scoring_players = [game.opponent]
     scoring_players << game.opponent_2 if game.is_three_player_game?
     scoring_players << game.dealer
 
     scoring_players.each do |player|
+      pegging_points = pegging_scores.fetch(player.id, []).sum { |play| play.fetch(:points) }
+      log("#{player_label(player)} pegging score: #{pegging_points} point#{"s" if pegging_points != 1}.")
+      hand_score = round_scorecard.fetch(player.id).fetch(:hand).fetch(:total_score)
+      log("#{player_label(player)} hand score: #{hand_score} point#{"s" if hand_score != 1}.")
       game.submit_hand_scores(player)
-      log("#{player_label(player)} score: #{player.total_score}")
     end
     crib_owner = game.dealer
-    crib_score_before = crib_owner.total_score
+    crib_score = round_scorecard.fetch(crib_owner.id).fetch(:crib).fetch(:total_score)
     game.submit_crib_scores
-    crib_points = crib_owner.total_score - crib_score_before
-    log("Crib scored #{crib_points} point#{"s" if crib_points != 1} for #{player_label(crib_owner)}.")
+    log("#{player_label(crib_owner)} crib score: #{crib_score} point#{"s" if crib_score != 1}.")
     log("Player totals: #{game.players.map { |player| "#{player_label(player)}: #{player.total_score}" }.join(", ")}")
   end
 
@@ -253,7 +253,8 @@ class HumanVsAiRunner
   def player_label(player)
     return @human_name if player == @human_player
 
-    "AI Player #{player.id}"
+    ai_name = {"1" => "One", "2" => "Two", "0" => "Three"}.fetch(player.id, player.id)
+    "AI Player #{ai_name}"
   end
 
   def format_score_reasons(reasons)
