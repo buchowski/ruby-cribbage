@@ -104,7 +104,7 @@ class HumanVsAiRunner
       log("")
     end
 
-    log("Game over. Winner: #{player_label(game.winner)}")
+    log("Winner: #{player_label(game.winner)} with #{game.winner.total_score} points.")
     game
   end
 
@@ -212,7 +212,10 @@ class HumanVsAiRunner
       hand_score = round_scorecard.fetch(player.id).fetch(:hand).fetch(:total_score)
       log("#{player_label(player)} hand score: #{hand_score} point#{"s" if hand_score != 1}.")
       game.submit_hand_scores(player)
+      break if game.fsm.game_over?
     end
+    return if game.fsm.game_over?
+
     crib_owner = game.dealer
     crib_score = round_scorecard.fetch(crib_owner.id).fetch(:crib).fetch(:total_score)
     game.submit_crib_scores
