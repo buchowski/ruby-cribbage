@@ -112,15 +112,26 @@ module CribbageGame
 
       throw "31 should always be is_last_card" if pile_score == 31 && !is_last_card
 
-      points = 0
-      points = 1 if pile_score == 31
-      points = 2 if pile_score == 15
+      reasons = []
+      if pile_score == 31
+        reasons << {type: "thirty_one", points: 2}
+      elsif pile_score == 15
+        reasons << {type: "fifteen", points: 2}
+      end
+      if is_last_card && pile_score != 31
+        reasons << {type: "last_card", points: 1}
+      end
 
-      points += 1 if is_last_card
-      points += score_consecutive pile_cards
-      points += score_pile_runs pile_cards
+      consecutive_points = score_consecutive pile_cards
+      if consecutive_points > 0
+        consecutive_type = {2 => "pair", 6 => "three_of_a_kind", 12 => "four_of_a_kind"}.fetch(consecutive_points)
+        reasons << {type: consecutive_type, points: consecutive_points}
+      end
 
-      points
+      run_points = score_pile_runs pile_cards
+      reasons << {type: "run", points: run_points} if run_points > 0
+
+      {points: reasons.sum { |reason| reason[:points] }, reasons: reasons}
     end
   end
 end

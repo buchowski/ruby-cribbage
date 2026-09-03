@@ -52,73 +52,127 @@ RSpec.describe CribbageGame::Score, "score_client" do
   context "get_pile_points - foreign card (extra 7h) breaks run" do
     it "should return 0 for 8" do
       cards = @score_client.get_cards ["8h"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
     it "should return 2 for 8, 7" do
       cards = @score_client.get_cards ["8h", "7c"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 2
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 2
     end
     it "should return 2 for 8, 7, 7" do
       cards = @score_client.get_cards ["8h", "7c", "7h"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 2
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 2
     end
     it "should return 0 for 8, 7, 7, 6" do
       cards = @score_client.get_cards ["8h", "7c", "7h", "6s"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
   end
   context "get_pile_points - nonsequential run" do
     it "should return 0" do
       cards = @score_client.get_cards ["9h"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
     it "should return 2 for 15" do
       cards = @score_client.get_cards ["9h", "6d"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 2
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 2
     end
     it "should return 0" do
       cards = @score_client.get_cards ["9h", "6d", "8d"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
     it "should return 4 for run" do
       cards = @score_client.get_cards ["9h", "6d", "8d", "7c"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 4
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 4
     end
     it "should return 5 for run" do
       cards = @score_client.get_cards ["2h", "4d", "3d", "6c", "5h"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 5
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 5
     end
     it "should return 3 for run" do
       cards = @score_client.get_cards ["jh", "9d", "10d"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 3
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 3
     end
   end
   context "get_pile_points - sequential run" do
     it "should return 0" do
       cards = @score_client.get_cards ["9h"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
     it "should return 0" do
       cards = @score_client.get_cards ["9h", "ad"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
     it "should return 0" do
       cards = @score_client.get_cards ["9h", "ad", "2h"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
     it "should return 3 for run" do
       cards = @score_client.get_cards ["10h", "ad", "2h", "3d"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 3
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 3
     end
     it "should return 4 for run" do
       cards = @score_client.get_cards ["9h", "ad", "2h", "3d", "4c"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 4
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 4
     end
     it "should return 0" do
       cards = @score_client.get_cards ["9h", "ad", "2h", "3d", "4c", "6d"]
-      expect(@score_client.get_pile_points(cards, false)).to eql 0
+      expect(@score_client.get_pile_points(cards, false)[:points]).to eql 0
     end
   end
+
+  context "get_pile_points reasons" do
+    it "explains a fifteen" do
+      cards = @score_client.get_cards ["9h", "6d"]
+      score = @score_client.get_pile_points(cards, false)
+
+      expect(score).to eql({points: 2, reasons: [{type: "fifteen", points: 2}]})
+    end
+
+    it "explains a fifteen and a last card together" do
+      cards = @score_client.get_cards ["9h", "6d"]
+      score = @score_client.get_pile_points(cards, true)
+
+      expect(score).to eql({
+        points: 3,
+        reasons: [
+          {type: "fifteen", points: 2},
+          {type: "last_card", points: 1}
+        ]
+      })
+    end
+
+    it "explains thirty-one without calling it a last card" do
+      cards = @score_client.get_cards ["10h", "9d", "6c", "6s"]
+      score = @score_client.get_pile_points(cards, true)
+
+      expect(score[:points]).to eql 4
+      expect(score[:reasons]).to include({type: "thirty_one", points: 2})
+      expect(score[:reasons]).not_to include({type: "last_card", points: 1})
+    end
+
+    it "explains a last card separately" do
+      cards = @score_client.get_cards ["9h"]
+      score = @score_client.get_pile_points(cards, true)
+
+      expect(score[:reasons]).to eql [{type: "last_card", points: 1}]
+    end
+
+    it "explains pairs and runs together" do
+      cards = @score_client.get_cards ["5h", "5d", "5c"]
+      score = @score_client.get_pile_points(cards, false)
+
+      expect(score[:points]).to eql 8
+      expect(score[:reasons]).to include({type: "fifteen", points: 2})
+      expect(score[:reasons]).to include({type: "three_of_a_kind", points: 6})
+    end
+  end
+
+  it "exposes the scorecards through Game" do
+    game = CribbageGame::Game.new
+
+    expect(game.scorecards).to eql({})
+  end
+
   context "score_hand" do
     it "should not score 31 or ace as adjacent to king" do
       cards = @score_client.get_cards ["10h", "qd", "kh", "ad"]
