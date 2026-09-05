@@ -59,8 +59,8 @@ module CribbageGame
         expect { @dealer.play_card "9c" }.to raise_error(CardTooLargeError)
         expect { @opponent.play_card "4c" }.to raise_error(NotYourTurnError)
         @dealer.play_card "3h" #31
-        # TODO 31 score assertion
-        # TODO last card score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "thirty_one", points: 2}]
       end
 
       it "should play round 2" do
@@ -68,11 +68,13 @@ module CribbageGame
         expect { @opponent.play_card "qs" }.to raise_error(NotYourCardError)
         @opponent.play_card "4c"
         @opponent_2.play_card "4d"
-        # TODO add double 4 score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "pair", points: 2}]
         @dealer.play_card "9c" #17
         expect { @opponent.play_card "6h" }.to raise_error(NotYourTurnError)
         @opponent_2.play_card "5d" #22
-        # TODO last card score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should score opponent's hand" do
@@ -131,14 +133,16 @@ module CribbageGame
         @opponent.play_card "10d"
         @opponent_2.play_card "3d"
         @dealer.play_card "2h" #15
-        # TODO add 15 score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "fifteen", points: 2}]
         @opponent.play_card "ad"
         @opponent_2.play_card "jd" #26
         expect { @dealer.play_card "9d" }.to raise_error(CardTooLargeError)
         @dealer.play_card "2s" # 28
         expect { @opponent.play_card "jh" }.to raise_error(NotYourTurnError)
         @opponent_2.play_card "ah" #29
-        # TODO last card score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should play round 2" do
@@ -147,13 +151,14 @@ module CribbageGame
         @opponent_2.play_card "7s" #26
         expect { @dealer.play_card "7c" }.to raise_error(NotYourTurnError)
         @opponent.play_card "5h" #31
-        # TODO 31 score assertion
-        # TODO last card score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "thirty_one", points: 2}]
       end
 
       it "should play round 3" do
         @dealer.play_card "7c"
-        # TODO last card score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should scores hands and crib" do
@@ -208,9 +213,9 @@ module CribbageGame
         expect { @opponent.play_card "8h" }.to raise_error(NotYourTurnError)
         expect { @opponent_2.play_card "4d" }.to raise_error(NotYourTurnError)
         @dealer.play_card "2h" # pair & 31
-        # TODO 31 score assertion
-        # TODO pair score assertion
-        # TODO last card score assertions
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 4
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to include({type: "thirty_one", points: 2})
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to include({type: "pair", points: 2})
       end
 
       it "should play round 2" do
@@ -219,12 +224,14 @@ module CribbageGame
         @dealer.play_card "10s" #22
         expect { @opponent.play_card "kh" }.to raise_error(NotYourTurnError)
         @opponent_2.play_card "5d" #27
-        # TODO 31 score assertion
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should play round 3" do
         @opponent.play_card "kh"
-        # TODO 31 score assertion
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should scores hands and crib" do
@@ -238,8 +245,7 @@ module CribbageGame
     context "fourth hand" do
       before(:all) do
         @dealer_cards = ["8d", "4s", "9d", "6c", "qh"]
-        # TODO both opponents have 3d which should be impossible since there's only one 3d in the deck. Fix this in the test setup.
-        @opponent_cards = ["ah", "js", "2s", "5h", "3d"]
+        @opponent_cards = ["ah", "js", "2s", "5h", "3c"]
         @opponent_2_cards = ["2h", "3d", "4d", "5d", "6d"]
         @flip_card = "9c"
         @dealer = @game.dealer
@@ -260,7 +266,7 @@ module CribbageGame
 
       it "should let players discard" do
         @dealer.discard ["qh"]
-        @opponent.discard ["3d"]
+        @opponent.discard ["3c"]
         @opponent_2.discard ["6d"]
       end
 
@@ -276,7 +282,8 @@ module CribbageGame
         @opponent_2.play_card "4d" # 28
         expect { @dealer.play_card "8d" }.to raise_error(NotYourTurnError)
         @opponent.play_card "2s" #30
-        # TODO last card score assertion
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should play round 2" do
@@ -286,7 +293,8 @@ module CribbageGame
         @opponent_2.play_card "2h" #14
         @dealer.play_card "9d" #23
         @dealer.play_card "6c" #29
-        # TODO last card score assertion
+        expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
+        expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should scores hands and crib" do
