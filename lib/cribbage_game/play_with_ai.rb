@@ -4,7 +4,7 @@ require_relative "game"
 
 class HumanVsAiRunner
   MODEL = "gpt-5-nano"
-  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3]"
+  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3] [--log-ai-inputs]"
 
   DISCARD_TOOL = {
     "type" => "function",
@@ -41,7 +41,7 @@ class HumanVsAiRunner
     }
   }.freeze
 
-  def initialize(number_of_players: 2, name: nil, client: nil, input: $stdin, output: $stdout)
+  def initialize(number_of_players: 2, name: nil, log_ai_inputs: false, client: nil, input: $stdin, output: $stdout)
     unless [2, 3].include?(number_of_players)
       raise ArgumentError, "number_of_players must be either 2 or 3"
     end
@@ -49,13 +49,14 @@ class HumanVsAiRunner
     @number_of_players = number_of_players
     @human_name = name.to_s.strip
     @human_name = "Human Player" if @human_name.empty?
+    @log_ai_inputs = log_ai_inputs
     @client = client || default_client
     @input = input
     @output = output
   end
 
   def self.from_argv(arguments)
-    options = {name: nil, number_of_players: 2}
+    options = {name: nil, number_of_players: 2, log_ai_inputs: false}
     parser = OptionParser.new do |opts|
       opts.banner = USAGE
       opts.on_tail("-h", "--help", "Show available options") do
@@ -68,6 +69,9 @@ class HumanVsAiRunner
       end
       opts.on("--number-of-players COUNT", Integer, "Alias for --players (default: 2)") do |count|
         options[:number_of_players] = count
+      end
+      opts.on("--log-ai-inputs", "Log AI inputs and failed tool attempts") do
+        options[:log_ai_inputs] = true
       end
     end
 
@@ -231,7 +235,7 @@ class HumanVsAiRunner
 
   def ai_tool_arguments(player, tool, input)
     3.times do |attempt|
-      log("#{player_label(player)} input: #{input}")
+      log("#{player_label(player)} input: #{input}") if @log_ai_inputs
       response = @client.responses.create(
         parameters: {
           model: MODEL,
@@ -246,9 +250,13 @@ class HumanVsAiRunner
       arguments = raw_arguments && JSON.parse(raw_arguments)
       return arguments if arguments && yield(arguments)
 
-      log("#{player_label(player)} failed tool #{tool_name} with arguments #{arguments.inspect} (attempt #{attempt + 1}).")
+      if @log_ai_inputs
+        log("#{player_label(player)} failed tool #{tool_name} with arguments #{arguments.inspect} (attempt #{attempt + 1}).")
+      end
     rescue JSON::ParserError, KeyError, TypeError
-      log("#{player_label(player)} failed tool #{tool_name || tool["name"]} with raw arguments #{raw_arguments.inspect} (attempt #{attempt + 1}).")
+      if @log_ai_inputs
+        log("#{player_label(player)} failed tool #{tool_name || tool["name"]} with raw arguments #{raw_arguments.inspect} (attempt #{attempt + 1}).")
+      end
     end
 
     raise "#{player_label(player)} failed to provide a legal action"
