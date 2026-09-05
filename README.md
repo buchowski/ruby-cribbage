@@ -1,6 +1,6 @@
 # CribbageGame
 
-Two player cribbage game. https://bicyclecards.com/how-to-play/cribbage/
+Two- or three-player cribbage game. https://bicyclecards.com/how-to-play/cribbage/
 
 ## Installation
 
@@ -48,6 +48,31 @@ game = Game.new ({
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+### Playing against AI
+
+The AI runner is an optional feature. Install the optional `ruby-openai` gem
+separately and provide an OpenAI API key:
+
+```sh
+gem install ruby-openai
+export OPENAI_API_KEY=your-key
+```
+
+Run a game with one human and two AI players:
+
+```sh
+ruby bin/play_with_ai --players 3 --name Arnold
+```
+
+The runner can also be required by Ruby code with
+`require "cribbage_game/play_with_ai"`.
+
+To debug the runner:
+
+```sh
+rdbg -O --port 12345 bin/play_with_ai
+```
 
 ## Contributing
 

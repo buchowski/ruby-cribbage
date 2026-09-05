@@ -1,11 +1,10 @@
 require "json"
 require "optparse"
-require "openai"
 require_relative "game"
 
 class HumanVsAiRunner
   MODEL = "gpt-5-nano"
-  USAGE = "Usage: ruby lib/cribbage_game/play_with_ai.rb [--name NAME] [--players 2|3]"
+  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3]"
 
   DISCARD_TOOL = {
     "type" => "function",
@@ -50,10 +49,7 @@ class HumanVsAiRunner
     @number_of_players = number_of_players
     @human_name = name.to_s.strip
     @human_name = "Human Player" if @human_name.empty?
-    @client = client || OpenAI::Client.new(
-      access_token: ENV.fetch("OPENAI_API_KEY"),
-      log_errors: true
-    )
+    @client = client || default_client
     @input = input
     @output = output
   end
@@ -109,6 +105,16 @@ class HumanVsAiRunner
   end
 
   private
+
+  def default_client
+    require "openai"
+    OpenAI::Client.new(
+      access_token: ENV.fetch("OPENAI_API_KEY"),
+      log_errors: true
+    )
+  rescue LoadError
+    raise LoadError, "The AI runner requires the ruby-openai gem"
+  end
 
   def discard_hands(game, human)
     game.players.each do |player|
@@ -278,14 +284,5 @@ class HumanVsAiRunner
 
   def log(message)
     @output.puts(message)
-  end
-end
-
-if $PROGRAM_NAME == __FILE__
-  begin
-    HumanVsAiRunner.from_argv(ARGV).run
-  rescue ArgumentError => error
-    warn error.message
-    exit 1
   end
 end
