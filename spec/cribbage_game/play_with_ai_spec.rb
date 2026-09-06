@@ -42,6 +42,7 @@ RSpec.describe HumanVsAiRunner do
     expect(described_class).to have_received(:new).with(
       name: nil,
       number_of_players: 2,
+      all_ai: false,
       log_ai_inputs: false
     )
   end
@@ -53,8 +54,30 @@ RSpec.describe HumanVsAiRunner do
     expect(described_class).to have_received(:new).with(
       name: nil,
       number_of_players: 2,
+      all_ai: false,
       log_ai_inputs: true
     )
+  end
+
+  it "enables all-AI mode from the option parser" do
+    allow(described_class).to receive(:new).and_return(:runner)
+
+    expect(described_class.from_argv(["--all-ai", "--players", "3"])).to eql(:runner)
+    expect(described_class).to have_received(:new).with(
+      name: nil,
+      number_of_players: 3,
+      all_ai: true,
+      log_ai_inputs: false
+    )
+  end
+
+  it "uses sequential AI labels in all-AI mode" do
+    runner = described_class.new(all_ai: true, client: FakeResponsesClient.new([]))
+    game = CribbageGame::Game.new(number_of_players: 3)
+
+    labels = game.players.map { |player| runner.send(:player_label, player) }
+
+    expect(labels).to eql(["AI Player One", "AI Player Two", "AI Player Three"])
   end
 
   it "does not log AI inputs or failed tools by default" do

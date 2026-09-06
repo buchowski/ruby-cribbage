@@ -65,6 +65,18 @@ Run a game with one human and two AI players:
 ruby bin/play_with_ai --players 3 --name Arnold
 ```
 
+Watch two AI players play each other:
+
+```sh
+ruby bin/play_with_ai --all-ai --players 2
+```
+
+Watch three AI players play each other:
+
+```sh
+ruby bin/play_with_ai --all-ai --players 3
+```
+
 The runner can also be required by Ruby code with
 `require "cribbage_game/play_with_ai"`.
 

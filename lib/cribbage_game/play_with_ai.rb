@@ -4,7 +4,7 @@ require_relative "game"
 
 class HumanVsAiRunner
   MODEL = "gpt-5-nano"
-  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3] [--log-ai-inputs]"
+  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3] [--all-ai] [--log-ai-inputs]"
 
   DISCARD_TOOL = {
     "type" => "function",
@@ -41,12 +41,13 @@ class HumanVsAiRunner
     }
   }.freeze
 
-  def initialize(number_of_players: 2, name: nil, log_ai_inputs: false, client: nil, input: $stdin, output: $stdout)
+  def initialize(number_of_players: 2, name: nil, all_ai: false, log_ai_inputs: false, client: nil, input: $stdin, output: $stdout)
     unless [2, 3].include?(number_of_players)
       raise ArgumentError, "number_of_players must be either 2 or 3"
     end
 
     @number_of_players = number_of_players
+    @all_ai = all_ai
     @human_name = name.to_s.strip
     @human_name = "Human Player" if @human_name.empty?
     @log_ai_inputs = log_ai_inputs
@@ -56,7 +57,7 @@ class HumanVsAiRunner
   end
 
   def self.from_argv(arguments)
-    options = {name: nil, number_of_players: 2, log_ai_inputs: false}
+    options = {name: nil, number_of_players: 2, all_ai: false, log_ai_inputs: false}
     parser = OptionParser.new do |opts|
       opts.banner = USAGE
       opts.on_tail("-h", "--help", "Show available options") do
@@ -73,6 +74,9 @@ class HumanVsAiRunner
       opts.on("--log-ai-inputs", "Log AI inputs and failed tool attempts") do
         options[:log_ai_inputs] = true
       end
+      opts.on("--all-ai", "Watch all players play by AI") do
+        options[:all_ai] = true
+      end
     end
 
     remaining_arguments = parser.parse!(arguments.dup)
@@ -85,8 +89,8 @@ class HumanVsAiRunner
 
   def run
     game = CribbageGame::Game.new(number_of_players: @number_of_players)
-    human = game.players.first
-    human.name = @human_name
+    human = @all_ai ? nil : game.players.first
+    human.name = @human_name unless human.nil?
     @human_player = human
 
     game.cut_for_deal
@@ -270,7 +274,8 @@ class HumanVsAiRunner
   def player_label(player)
     return @human_name if player == @human_player
 
-    ai_name = {"1" => "One", "2" => "Two", "0" => "Three"}.fetch(player.id, player.id)
+    ai_names = @all_ai ? {"0" => "One", "1" => "Two", "2" => "Three"} : {"1" => "One", "2" => "Two", "0" => "Three"}
+    ai_name = ai_names.fetch(player.id, player.id)
     "AI Player #{ai_name}"
   end
 
