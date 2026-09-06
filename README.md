@@ -65,6 +65,12 @@ Run a game with one human and two AI players:
 ruby bin/play_with_ai --players 3 --name Arnold
 ```
 
+Set a custom winning score:
+
+```sh
+ruby bin/play_with_ai --players 3 --points-to-win 35 --name Arnold
+```
+
 Watch two AI players play each other:
 
 ```sh

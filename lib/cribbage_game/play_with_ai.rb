@@ -4,7 +4,7 @@ require_relative "game"
 
 class HumanVsAiRunner
   MODEL = "gpt-5-nano"
-  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3] [--all-ai] [--log-ai-inputs]"
+  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3] [--points-to-win POINTS] [--all-ai] [--log-ai-inputs]"
 
   DISCARD_TOOL = {
     "type" => "function",
@@ -41,12 +41,13 @@ class HumanVsAiRunner
     }
   }.freeze
 
-  def initialize(number_of_players: 2, name: nil, all_ai: false, log_ai_inputs: false, client: nil, input: $stdin, output: $stdout)
+  def initialize(number_of_players: 2, points_to_win: 121, name: nil, all_ai: false, log_ai_inputs: false, client: nil, input: $stdin, output: $stdout)
     unless [2, 3].include?(number_of_players)
       raise ArgumentError, "number_of_players must be either 2 or 3"
     end
 
     @number_of_players = number_of_players
+    @points_to_win = points_to_win
     @all_ai = all_ai
     @human_name = name.to_s.strip
     @human_name = "Human Player" if @human_name.empty?
@@ -57,7 +58,7 @@ class HumanVsAiRunner
   end
 
   def self.from_argv(arguments)
-    options = {name: nil, number_of_players: 2, all_ai: false, log_ai_inputs: false}
+    options = {name: nil, number_of_players: 2, points_to_win: 121, all_ai: false, log_ai_inputs: false}
     parser = OptionParser.new do |opts|
       opts.banner = USAGE
       opts.on_tail("-h", "--help", "Show available options") do
@@ -70,6 +71,9 @@ class HumanVsAiRunner
       end
       opts.on("--number-of-players COUNT", Integer, "Alias for --players (default: 2)") do |count|
         options[:number_of_players] = count
+      end
+      opts.on("--points-to-win POINTS", Integer, "Points needed to win (default: 121)") do |points|
+        options[:points_to_win] = points
       end
       opts.on("--log-ai-inputs", "Log AI inputs and failed tool attempts") do
         options[:log_ai_inputs] = true
@@ -88,7 +92,7 @@ class HumanVsAiRunner
   end
 
   def run
-    game = CribbageGame::Game.new(number_of_players: @number_of_players)
+    game = CribbageGame::Game.new(number_of_players: @number_of_players, points_to_win: @points_to_win)
     human = @all_ai ? nil : game.players.first
     human.name = @human_name unless human.nil?
     @human_player = human

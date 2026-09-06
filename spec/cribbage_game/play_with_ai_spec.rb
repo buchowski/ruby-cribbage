@@ -42,6 +42,7 @@ RSpec.describe HumanVsAiRunner do
     expect(described_class).to have_received(:new).with(
       name: nil,
       number_of_players: 2,
+      points_to_win: 121,
       all_ai: false,
       log_ai_inputs: false
     )
@@ -54,6 +55,7 @@ RSpec.describe HumanVsAiRunner do
     expect(described_class).to have_received(:new).with(
       name: nil,
       number_of_players: 2,
+      points_to_win: 121,
       all_ai: false,
       log_ai_inputs: true
     )
@@ -66,7 +68,21 @@ RSpec.describe HumanVsAiRunner do
     expect(described_class).to have_received(:new).with(
       name: nil,
       number_of_players: 3,
+      points_to_win: 121,
       all_ai: true,
+      log_ai_inputs: false
+    )
+  end
+
+  it "sets the points needed to win from the option parser" do
+    allow(described_class).to receive(:new).and_return(:runner)
+
+    expect(described_class.from_argv(["--points-to-win", "35"])).to eql(:runner)
+    expect(described_class).to have_received(:new).with(
+      name: nil,
+      number_of_players: 2,
+      points_to_win: 35,
+      all_ai: false,
       log_ai_inputs: false
     )
   end
