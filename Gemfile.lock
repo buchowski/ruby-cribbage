@@ -3,8 +3,8 @@ PATH
   specs:
     cribbage_game (0.1.0)
       aasm (~> 5.0, >= 5.0.6)
-      card_deck
-      ostruct
+      card_deck (~> 4.02)
+      ostruct (~> 0.6.0)
       sum_all_number_combinations (~> 0.1.2)
 
 GEM
