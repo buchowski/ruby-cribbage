@@ -23,7 +23,7 @@ module CribbageGame
 
       @number_of_players = args.fetch(:number_of_players, 2)
       unless [2, 3].include?(@number_of_players)
-        raise ArgumentError, ':number_of_players must be either 2 or 3'
+        raise ArgumentError, ":number_of_players must be either 2 or 3"
       end
 
       @players = @number_of_players.times.map { |id| Player.new self, id.to_s }

@@ -1,25 +1,25 @@
 require "stringio"
 require "cribbage_game/play_with_ai"
 
-RSpec.describe HumanVsAiRunner do
-  class FakeResponsesClient
-    attr_reader :requests
+class FakeResponsesClient
+  attr_reader :requests
 
-    def initialize(responses)
-      @responses = responses
-      @requests = []
-    end
-
-    def responses
-      self
-    end
-
-    def create(parameters:)
-      @requests << parameters
-      @responses.shift
-    end
+  def initialize(responses)
+    @responses = responses
+    @requests = []
   end
 
+  def responses
+    self
+  end
+
+  def create(parameters:)
+    @requests << parameters
+    @responses.shift
+  end
+end
+
+RSpec.describe HumanVsAiRunner do
   let(:player) { CribbageGame::Game.new.players[1] }
   let(:tool) { HumanVsAiRunner::PLAY_CARD_TOOL }
   let(:responses) do
@@ -116,6 +116,6 @@ RSpec.describe HumanVsAiRunner do
     # "5h" is the 2nd attempt. "bad" is the 1st attempt, which fails and is logged to output because log_ai_inputs is true
     expect(run_tool(runner)).to eql({"card_id" => "5h"})
     expect(output.string).to include("AI Player One input: Choose a card")
-    expect(output.string).to match(/failed tool play_card with arguments \{\"card_id\"\s*=>\s*\"bad\"\} \(attempt 1\)/)
+    expect(output.string).to match(/failed tool play_card with arguments \{"card_id"\s*=>\s*"bad"\} \(attempt 1\)/)
   end
 end

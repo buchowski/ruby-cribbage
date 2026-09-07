@@ -58,7 +58,7 @@ module CribbageGame
         expect { @opponent_2.play_card "4d" }.to raise_error(NotYourTurnError)
         expect { @dealer.play_card "9c" }.to raise_error(CardTooLargeError)
         expect { @opponent.play_card "4c" }.to raise_error(NotYourTurnError)
-        @dealer.play_card "3h" #31
+        @dealer.play_card "3h" # 31
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "thirty_one", points: 2}]
       end
@@ -70,9 +70,9 @@ module CribbageGame
         @opponent_2.play_card "4d"
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "pair", points: 2}]
-        @dealer.play_card "9c" #17
+        @dealer.play_card "9c" # 17
         expect { @opponent.play_card "6h" }.to raise_error(NotYourTurnError)
-        @opponent_2.play_card "5d" #22
+        @opponent_2.play_card "5d" # 22
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
@@ -132,25 +132,25 @@ module CribbageGame
       it "should play round 1" do
         @opponent.play_card "10d"
         @opponent_2.play_card "3d"
-        @dealer.play_card "2h" #15
+        @dealer.play_card "2h" # 15
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "fifteen", points: 2}]
         @opponent.play_card "ad"
-        @opponent_2.play_card "jd" #26
+        @opponent_2.play_card "jd" # 26
         expect { @dealer.play_card "9d" }.to raise_error(CardTooLargeError)
         @dealer.play_card "2s" # 28
         expect { @opponent.play_card "jh" }.to raise_error(NotYourTurnError)
-        @opponent_2.play_card "ah" #29
+        @opponent_2.play_card "ah" # 29
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
 
       it "should play round 2" do
         @dealer.play_card "9d"
-        @opponent.play_card "jh"  #19
-        @opponent_2.play_card "7s" #26
+        @opponent.play_card "jh"  # 19
+        @opponent_2.play_card "7s" # 26
         expect { @dealer.play_card "7c" }.to raise_error(NotYourTurnError)
-        @opponent.play_card "5h" #31
+        @opponent.play_card "5h" # 31
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 2
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "thirty_one", points: 2}]
       end
@@ -204,11 +204,11 @@ module CribbageGame
       it "should play round 1" do
         @opponent.play_card "4h"
         @opponent_2.play_card "2d"
-        @dealer.play_card "8c" #14
+        @dealer.play_card "8c" # 14
         @opponent.play_card "ks" # 24
         @opponent_2.play_card "3d" # 27
         expect { @dealer.play_card "10s" }.to raise_error(CardTooLargeError)
-        @dealer.play_card "2c" #29
+        @dealer.play_card "2c" # 29
         # opponent doesn't have a playable card since 8h and kh are too large
         expect { @opponent.play_card "8h" }.to raise_error(NotYourTurnError)
         expect { @opponent_2.play_card "4d" }.to raise_error(NotYourTurnError)
@@ -221,9 +221,9 @@ module CribbageGame
       it "should play round 2" do
         @opponent.play_card "8h"
         @opponent_2.play_card "4d"
-        @dealer.play_card "10s" #22
+        @dealer.play_card "10s" # 22
         expect { @opponent.play_card "kh" }.to raise_error(NotYourTurnError)
-        @opponent_2.play_card "5d" #27
+        @opponent_2.play_card "5d" # 27
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
@@ -281,7 +281,7 @@ module CribbageGame
         @opponent.play_card "js" # 24
         @opponent_2.play_card "4d" # 28
         expect { @dealer.play_card "8d" }.to raise_error(NotYourTurnError)
-        @opponent.play_card "2s" #30
+        @opponent.play_card "2s" # 30
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
@@ -290,9 +290,9 @@ module CribbageGame
         @opponent_2.play_card "3d"
         @dealer.play_card "4s" # 7
         @opponent.play_card "5h"
-        @opponent_2.play_card "2h" #14
-        @dealer.play_card "9d" #23
-        @dealer.play_card "6c" #29
+        @opponent_2.play_card "2h" # 14
+        @dealer.play_card "9d" # 23
+        @dealer.play_card "6c" # 29
         expect(@game.scorecards[@game.round][:play].last[:points]).to eql 1
         expect(@game.scorecards[@game.round][:play].last[:reasons]).to eql [{type: "last_card", points: 1}]
       end
