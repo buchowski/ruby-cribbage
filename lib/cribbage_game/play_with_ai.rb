@@ -1,11 +1,10 @@
 require "json"
 require "optparse"
-require "openai"
 require_relative "game"
 
 class HumanVsAiRunner
   MODEL = "gpt-5-nano"
-  USAGE = "Usage: ruby lib/cribbage_game/play_with_ai.rb [--name NAME] [--players 2|3]"
+  USAGE = "Usage: play_with_ai [--name NAME] [--players 2|3] [--points-to-win POINTS] [--all-ai] [--log-ai-inputs]"
 
   DISCARD_TOOL = {
     "type" => "function",
@@ -42,24 +41,24 @@ class HumanVsAiRunner
     }
   }.freeze
 
-  def initialize(number_of_players: 2, name: nil, client: nil, input: $stdin, output: $stdout)
+  def initialize(number_of_players: 2, points_to_win: 121, name: nil, all_ai: false, log_ai_inputs: false, client: nil, input: $stdin, output: $stdout)
     unless [2, 3].include?(number_of_players)
       raise ArgumentError, "number_of_players must be either 2 or 3"
     end
 
     @number_of_players = number_of_players
+    @points_to_win = points_to_win
+    @all_ai = all_ai
     @human_name = name.to_s.strip
     @human_name = "Human Player" if @human_name.empty?
-    @client = client || OpenAI::Client.new(
-      access_token: ENV.fetch("OPENAI_API_KEY"),
-      log_errors: true
-    )
+    @log_ai_inputs = log_ai_inputs
+    @client = client || default_client
     @input = input
     @output = output
   end
 
   def self.from_argv(arguments)
-    options = {name: nil, number_of_players: 2}
+    options = {name: nil, number_of_players: 2, points_to_win: 121, all_ai: false, log_ai_inputs: false}
     parser = OptionParser.new do |opts|
       opts.banner = USAGE
       opts.on_tail("-h", "--help", "Show available options") do
@@ -73,6 +72,15 @@ class HumanVsAiRunner
       opts.on("--number-of-players COUNT", Integer, "Alias for --players (default: 2)") do |count|
         options[:number_of_players] = count
       end
+      opts.on("--points-to-win POINTS", Integer, "Points needed to win (default: 121)") do |points|
+        options[:points_to_win] = points
+      end
+      opts.on("--log-ai-inputs", "Log AI inputs and failed tool attempts") do
+        options[:log_ai_inputs] = true
+      end
+      opts.on("--all-ai", "Watch all players play by AI") do
+        options[:all_ai] = true
+      end
     end
 
     remaining_arguments = parser.parse!(arguments.dup)
@@ -84,9 +92,9 @@ class HumanVsAiRunner
   end
 
   def run
-    game = CribbageGame::Game.new(number_of_players: @number_of_players)
-    human = game.players.first
-    human.name = @human_name
+    game = CribbageGame::Game.new(number_of_players: @number_of_players, points_to_win: @points_to_win)
+    human = @all_ai ? nil : game.players.first
+    human.name = @human_name unless human.nil?
     @human_player = human
 
     game.cut_for_deal
@@ -109,6 +117,16 @@ class HumanVsAiRunner
   end
 
   private
+
+  def default_client
+    require "openai"
+    OpenAI::Client.new(
+      access_token: ENV.fetch("OPENAI_API_KEY"),
+      log_errors: true
+    )
+  rescue LoadError
+    raise LoadError, "The AI runner requires the ruby-openai gem"
+  end
 
   def discard_hands(game, human)
     game.players.each do |player|
@@ -225,7 +243,7 @@ class HumanVsAiRunner
 
   def ai_tool_arguments(player, tool, input)
     3.times do |attempt|
-      log("#{player_label(player)} input: #{input}")
+      log("#{player_label(player)} input: #{input}") if @log_ai_inputs
       response = @client.responses.create(
         parameters: {
           model: MODEL,
@@ -240,9 +258,13 @@ class HumanVsAiRunner
       arguments = raw_arguments && JSON.parse(raw_arguments)
       return arguments if arguments && yield(arguments)
 
-      log("#{player_label(player)} failed tool #{tool_name} with arguments #{arguments.inspect} (attempt #{attempt + 1}).")
+      if @log_ai_inputs
+        log("#{player_label(player)} failed tool #{tool_name} with arguments #{arguments.inspect} (attempt #{attempt + 1}).")
+      end
     rescue JSON::ParserError, KeyError, TypeError
-      log("#{player_label(player)} failed tool #{tool_name || tool["name"]} with raw arguments #{raw_arguments.inspect} (attempt #{attempt + 1}).")
+      if @log_ai_inputs
+        log("#{player_label(player)} failed tool #{tool_name || tool["name"]} with raw arguments #{raw_arguments.inspect} (attempt #{attempt + 1}).")
+      end
     end
 
     raise "#{player_label(player)} failed to provide a legal action"
@@ -256,7 +278,8 @@ class HumanVsAiRunner
   def player_label(player)
     return @human_name if player == @human_player
 
-    ai_name = {"1" => "One", "2" => "Two", "0" => "Three"}.fetch(player.id, player.id)
+    ai_names = @all_ai ? {"0" => "One", "1" => "Two", "2" => "Three"} : {"1" => "One", "2" => "Two", "0" => "Three"}
+    ai_name = ai_names.fetch(player.id, player.id)
     "AI Player #{ai_name}"
   end
 
@@ -278,14 +301,5 @@ class HumanVsAiRunner
 
   def log(message)
     @output.puts(message)
-  end
-end
-
-if $PROGRAM_NAME == __FILE__
-  begin
-    HumanVsAiRunner.from_argv(ARGV).run
-  rescue ArgumentError => error
-    warn error.message
-    exit 1
   end
 end

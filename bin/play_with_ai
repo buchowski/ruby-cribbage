@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "cribbage_game/play_with_ai"
+
+begin
+  HumanVsAiRunner.from_argv(ARGV).run
+rescue ArgumentError => error
+  warn error.message
+  exit 1
+end

@@ -7,6 +7,4 @@ gemspec
 
 gem "rake", "~> 13.0"
 
-gem "ruby-openai"
-
 gem "standard", "~> 1.3"
