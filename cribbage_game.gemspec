@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "aasm", "~> 5.0", ">= 5.0.6"
   spec.add_dependency "sum_all_number_combinations", "~> 0.1.2"
   spec.add_dependency "ostruct", "~> 0.6.0"
+  spec.add_dependency "logger", ">= 1.7"
 
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rake", "~> 13.0"

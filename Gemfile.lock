@@ -4,6 +4,7 @@ PATH
     cribbage_game (0.1.0)
       aasm (~> 5.0, >= 5.0.6)
       card_deck (~> 4.02)
+      logger (>= 1.7)
       ostruct (~> 0.6.0)
       sum_all_number_combinations (~> 0.1.2)
 
@@ -16,6 +17,7 @@ GEM
     card_deck (4.02)
     concurrent-ruby (1.3.8)
     diff-lcs (1.6.2)
+    logger (1.7.0)
     ostruct (0.6.3)
     parallel (1.28.0)
     parser (3.3.12.0)
