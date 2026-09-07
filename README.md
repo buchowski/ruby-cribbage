@@ -1,27 +1,17 @@
 # CribbageGame
 
-Two- or three-player cribbage game. https://bicyclecards.com/how-to-play/cribbage/
+Ruby [cribbage](https://bicyclecards.com/how-to-play/cribbage/) game engine. Includes a `play_with_ai` game runner for play against AI players using OpenAI models (default: gpt-5-nano)
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'cribbage_game'
+```sh
+gem install cribbage_game
 ```
-
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install cribbage_game
 
 ## Usage
 
 ```ruby
-game = Game.new
+game = CribbageGame::Game.new({ number_of_players: 2 })
 game.cut_for_deal # randomly determines dealer
 game.deal # deals 6 cards to game.dealer.hand & game.opponent.hand
 game.dealer.discard ["7d", "qc"] # takes cards from hand and puts in crib
@@ -35,61 +25,30 @@ game.submit_hand_scores(game.dealer)
 game.submit_crib_scores  # adds the crib's score to game.dealer.total_score
 game.deal # begin next round
 ```
-### Initialization options
-```ruby
-game = Game.new ({
-  points_to_win: 35, # overrides default of 121
-  game_over_cb: lambda { puts "game over" } # function called on game_over
-})
-```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-### Playing against AI
-
-The AI runner is an optional feature. Install the optional `ruby-openai` gem
-separately and provide an OpenAI API key:
-
 ```sh
+bundle install
+bundle exec rake spec # tests
+bundle exec rake standard # linting
+./bin/console # shell script to start an interactive console
+```
+
+### Play against AI
+
+## Dependencies
+```sh
+bundle install
 gem install ruby-openai
-export OPENAI_API_KEY=your-key
+export OPENAI_API_KEY=your-api-key
 ```
 
-Run a game with one human and two AI players:
-
+## Playing the game
 ```sh
-ruby bin/play_with_ai --players 3 --name Arnold
-```
-
-Set a custom winning score:
-
-```sh
-ruby bin/play_with_ai --players 3 --points-to-win 35 --name Arnold
-```
-
-Watch two AI players play each other:
-
-```sh
-ruby bin/play_with_ai --all-ai --players 2
-```
-
-Watch three AI players play each other:
-
-```sh
-ruby bin/play_with_ai --all-ai --players 3
-```
-
-The runner can also be required by Ruby code with
-`require "cribbage_game/play_with_ai"`.
-
-To debug the runner:
-
-```sh
-rdbg -O --port 12345 bin/play_with_ai
+bin/play_with_ai --help # print command line options
+bin/play_with_ai --players 3 --name Kevin --points-to-win 32 # initialize game
+rdbg -O --port 12345 bin/play_with_ai # run with debugger
 ```
 
 ## Contributing
