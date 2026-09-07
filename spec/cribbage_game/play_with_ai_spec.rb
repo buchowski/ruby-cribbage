@@ -116,6 +116,6 @@ RSpec.describe HumanVsAiRunner do
     # "5h" is the 2nd attempt. "bad" is the 1st attempt, which fails and is logged to output because log_ai_inputs is true
     expect(run_tool(runner)).to eql({"card_id" => "5h"})
     expect(output.string).to include("AI Player One input: Choose a card")
-    expect(output.string).to include("failed tool play_card with arguments {\"card_id\"=>\"bad\"} (attempt 1)")
+    expect(output.string).to match(/failed tool play_card with arguments \{\"card_id\"\s*=>\s*\"bad\"\} \(attempt 1\)/)
   end
 end
