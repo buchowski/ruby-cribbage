@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cribbage_game (1.0.0)
+    cribbage_game (1.0.1)
       aasm (~> 5.0, >= 5.0.6)
       card_deck (~> 4.02)
       logger (>= 1.7)

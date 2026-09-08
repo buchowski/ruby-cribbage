@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["buchowski"]
   spec.email = ["bucholz.adam@gmail.com"]
 
-  spec.summary = "Two player cribbage card game"
+  spec.summary = "Cribbage game engine with AI player support"
   spec.homepage = "https://github.com/buchowski/ruby-cribbage"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
