@@ -1,6 +1,6 @@
 # CribbageGame
 
-Ruby [cribbage](https://bicyclecards.com/how-to-play/cribbage/) game engine. Includes a `play_with_ai` game runner for play against AI players using OpenAI models (default: gpt-5-nano)
+Ruby [cribbage](https://bicyclecards.com/how-to-play/cribbage/) game engine. Includes a `play_with_ai` game runner for play against AI players using OpenAI models
 
 ## Installation
 
